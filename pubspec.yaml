@@ -1,0 +1,44 @@
+name: again_inventory_project
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: lib/asset/font/Roboto/Roboto-Regular.ttf
+        - asset: lib/asset/font/Roboto/Roboto-Italic.ttf
+          style: italic
+        - asset: lib/asset/font/Roboto/Roboto-Bold.ttf
+          weight: 700
+    - family: Poppins
+      fonts:
+        - asset: lib/asset/font/Poppins/Poppins-Regular.ttf
+        - asset: lib/asset/font/Poppins/Poppins-Italic.ttf
+          style: italic
+        - asset: lib/asset/font/Poppins/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: lib/asset/font/Poppins/Poppins-Bold.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: lib/asset/font/Inter/Inter-Regular.ttf
+        - asset: lib/asset/font/Inter/Inter-SemiBold.ttf
+          weight: 600
+        - asset: lib/asset/font/Inter/Inter-Bold.ttf
+          weight: 700
