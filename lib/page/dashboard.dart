@@ -1,9 +1,12 @@
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
+import 'package:again_inventory_project/widget/dashboardmenu.dart'; // Assuming dashboardmenu.dart is in the correct location
 
 class Dashboard extends StatefulWidget {
   final Function(int) onAddProductClick;
-  const Dashboard({super.key, required this.onAddProductClick});
+
+  const Dashboard({Key? key, required this.onAddProductClick})
+      : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -32,27 +35,32 @@ class _DashboardState extends State<Dashboard> {
             Row(
               children: [
                 Expanded(
-                  child: dashboardMenu(
-                      text: "TOTAL PRODUCT", icon: Icons.inventory_2_outlined),
+                  child: DashboardMenu(
+                    text: "TOTAL PRODUCT",
+                    imagePath: 'lib/asset/images/product.png',
+                  ),
                 ),
                 Expanded(
-                  child: dashboardMenu(
-                      text: "OUT OF STOCK",
-                      icon: Icons.production_quantity_limits_outlined),
+                  child: DashboardMenu(
+                    text: "OUT OF STOCK",
+                    imagePath: 'lib/asset/images/outstock.png',
+                  ),
                 ),
               ],
             ),
             Row(
               children: [
                 Expanded(
-                  child: dashboardMenu(
-                      text: "LOW STOCK",
-                      icon: Icons.production_quantity_limits),
+                  child: DashboardMenu(
+                    text: "LOW STOCK",
+                    imagePath: 'lib/asset/images/lowstock.png',
+                  ),
                 ),
                 Expanded(
-                  child: dashboardMenu(
-                      text: "TOTAL EXPENSES",
-                      icon: Icons.attach_money_outlined),
+                  child: DashboardMenu(
+                    text: "TOTAL EXPENSES",
+                    imagePath: 'lib/asset/images/expenses.png',
+                  ),
                 ),
               ],
             ),
@@ -66,21 +74,25 @@ class _DashboardState extends State<Dashboard> {
                       _onAddProductPressed(4);
                     },
                     style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        backgroundColor: const Color(0xff23224C)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor: const Color(0xff23224C),
+                    ),
                     child: Row(
                       children: [
                         const Icon(Icons.add, color: Colors.white),
                         Text(
                           "Add Products",
                           style: TextStyle(
-                              fontFamily: "Poppins", color: colorWhite),
-                        )
+                            fontFamily: "Poppins",
+                            color: colorWhite,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
             Column(
@@ -137,61 +149,8 @@ class _DashboardState extends State<Dashboard> {
                       }
                     })
               ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget dashboardMenu({required String text, required IconData icon}) {
-    const padding = EdgeInsets.symmetric(horizontal: 5);
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xffB73030),
-          borderRadius: BorderRadius.all(Radius.circular(14)),
-        ),
-        child: InkWell(
-          onTap: () {},
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: padding,
-                        child: Icon(
-                          icon,
-                          color: colorWhite,
-                          size: 40,
-                        ),
-                      ),
-                      Padding(
-                        padding: padding,
-                        child: Text(
-                          "₱<INT>",
-                          style: TextStyle(
-                              color: Colors.red.shade100,
-                              fontFamily: "Roboto",
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    text,
-                    style: TextStyle(color: colorWhite, fontFamily: "Roboto"),
-                  )
-                ],
-              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -209,7 +168,7 @@ class _DashboardState extends State<Dashboard> {
           leading: Transform.translate(
             offset: const Offset(-10, 0),
             child: const Icon(
-              Icons.conveyor_belt,
+              Icons.check_box_outline_blank_outlined,
               size: 50,
             ),
           ),
@@ -240,5 +199,3 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
-// I added this line of code lol
