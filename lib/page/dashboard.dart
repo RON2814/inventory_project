@@ -1,3 +1,4 @@
+import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -9,6 +10,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final Product product = Product();
+
   void _onAddProductPressed(int index) {
     setState(() {
       widget.onAddProductClick(index);
@@ -110,14 +113,29 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-                ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      return listViewRecent("Dummy", 25, 254);
-                    }),
+                FutureBuilder<List<dynamic>>(
+                    future: product.fetchRecentProduct(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.length > 4
+                                ? 4
+                                : snapshot.data!.length,
+                            separatorBuilder: (context, index) =>
+                                const Divider(),
+                            itemBuilder: (context, index) {
+                              final product = snapshot.data![index];
+                              return listViewRecent(
+                                  product['product_name'],
+                                  product['quantity'],
+                                  product['product_price']);
+                            });
+                      }
+                    })
               ],
             )
           ],
@@ -191,7 +209,7 @@ class _DashboardState extends State<Dashboard> {
           leading: Transform.translate(
             offset: const Offset(-10, 0),
             child: const Icon(
-              Icons.check_box_outline_blank_outlined,
+              Icons.conveyor_belt,
               size: 50,
             ),
           ),

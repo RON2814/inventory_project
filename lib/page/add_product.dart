@@ -1,3 +1,4 @@
+import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class AddProduct extends StatefulWidget {
@@ -8,6 +9,8 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
+  final Product product = Product();
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
@@ -42,14 +45,28 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void _addProduct() {
-    if (_formKey.currentState!.validate()) {
-      print('Product Name: ${_nameController.text}');
-      print('Product Price: ${_priceController.text}');
-      print('Quantity: ${_quantityController.text}');
-      print('Product Category: ${_categoryController.text}');
-      print('Expiration Date: $_expirationDate');
-      print('Product Description: ${_descriptionController.text}');
+  void _addProduct() async {
+    try {
+      if (_formKey.currentState!.validate()) {
+        // print('Product Name: ${_nameController.text}');
+        // print('Product Price: ${_priceController.text}');
+        // print('Quantity: ${_quantityController.text}');
+        // print('Product Category: ${_categoryController.text}');
+        //print('Expiration Date: $_expirationDate');
+        // print('Product Description: ${_descriptionController.text}');
+        var result = await product.addProduct(
+            _nameController.text,
+            int.parse(_priceController.text),
+            int.parse(_quantityController.text),
+            _categoryController.text,
+            _expirationDate.toString(),
+            _descriptionController.text);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result['message'])));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
     }
   }
 
@@ -134,7 +151,7 @@ class _AddProductState extends State<AddProduct> {
               ),
               const SizedBox(height: 20),
               Row(
-                children: <Widget>[
+                children: [
                   Expanded(
                     child: TextFormField(
                       readOnly: true,
@@ -186,11 +203,11 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 child: const Text('Add Product',
-                style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-               )),
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )),
               ),
             ],
           ),

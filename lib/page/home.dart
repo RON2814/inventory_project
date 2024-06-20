@@ -74,15 +74,17 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 50),
-            Positioned(
-              left: 20,
-              right: 20,
-              bottom: 20,
-              child: BottomAppbar(
-                onItemClicked: _onItemPressed,
-                currentIndex: _currentPage,
-              ),
-            )
+            _selectedIndex != 4
+                ? Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 20,
+                    child: BottomAppbar(
+                      onItemClicked: _onItemPressed,
+                      currentIndex: _currentPage,
+                    ),
+                  )
+                : const SizedBox()
           ],
         ),
       ),

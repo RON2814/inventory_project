@@ -1,3 +1,4 @@
+import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class ProductsPage extends StatefulWidget {
@@ -17,6 +18,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Product product = Product();
+
     const padding = EdgeInsets.symmetric(horizontal: 20, vertical: 15);
 
     return Padding(
@@ -73,13 +76,26 @@ class _ProductsPageState extends State<ProductsPage> {
           ),
 
           Expanded(
-            child: ListView.builder(
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return _productListTile("Product Name 1", 0963736112, 178, 115);
-              },
-            ),
-          )
+              child: FutureBuilder<List<dynamic>>(
+                  future: product.fetchRecentProduct(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final product = snapshot.data![index];
+                          return _productListTile(
+                            product['product_name'],
+                            product['_id'],
+                            product['product_price'],
+                            product['quantity'],
+                          );
+                        },
+                      );
+                    }
+                  }))
         ],
       ),
     );
@@ -138,7 +154,7 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _productListTile(String productName, int id, int price, int stock) {
+  Widget _productListTile(String productName, String id, int price, int stock) {
     const Color white = Colors.white;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -150,56 +166,57 @@ class _ProductsPageState extends State<ProductsPage> {
         ),
         child: InkWell(
           onTap: () {},
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(productName,
-                      style:
-                          const TextStyle(fontFamily: "Inter", color: white)),
-                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    const Text("ID:",
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(productName,
                         style:
                             const TextStyle(fontFamily: "Inter", color: white)),
-                    Text(id.toString(),
-                        style:
-                            const TextStyle(fontFamily: "Inter", color: white))
-                  ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                    const Text("Price:",
-                        style:
-                            const TextStyle(fontFamily: "Inter", color: white)),
-                    Text("₱$price",
-                        style: const TextStyle(
-                            fontFamily: "Inter",
-                            color: white,
-                            fontStyle: FontStyle.italic))
-                  ]),
-                ],
-              ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Stock:",
-                      style: TextStyle(fontFamily: "Inter", color: white)),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: white,
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.remove),
-                        Text("$stock"),
-                        const Icon(Icons.add)
-                      ],
-                    ),
-                  )
-                ],
-              )
-            ],
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      const Text("ID:",
+                          style: TextStyle(fontFamily: "Inter", color: white)),
+                      Text(id.toString(),
+                          style: const TextStyle(
+                              fontFamily: "Inter", color: white))
+                    ]),
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      const Text("Price:",
+                          style: TextStyle(fontFamily: "Inter", color: white)),
+                      Text("₱$price",
+                          style: const TextStyle(
+                              fontFamily: "Inter",
+                              color: white,
+                              fontStyle: FontStyle.italic))
+                    ]),
+                  ],
+                ),
+                const Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Stock:",
+                        style: TextStyle(fontFamily: "Inter", color: white)),
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: white,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.remove),
+                          Text("$stock"),
+                          const Icon(Icons.add)
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
