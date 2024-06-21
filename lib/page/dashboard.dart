@@ -1,6 +1,5 @@
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
-import 'package:again_inventory_project/widget/dashboard_menu.dart'; // Assuming dashboardmenu.dart is in the correct location
 
 class Dashboard extends StatefulWidget {
   final Function(int) onAddProductClick;
@@ -31,35 +30,27 @@ class _DashboardState extends State<Dashboard> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const Row(
+            Row(
               children: [
                 Expanded(
-                  child: DashboardMenu(
-                    text: "TOTAL PRODUCT",
-                    imagePath: 'lib/asset/images/product.png',
-                  ),
+                  child: dashboardMenu(
+                      "TOTAL PRODUCT", 'lib/asset/images/product.png'),
                 ),
                 Expanded(
-                  child: DashboardMenu(
-                    text: "OUT OF STOCK",
-                    imagePath: 'lib/asset/images/outstock.png',
-                  ),
+                  child: dashboardMenu(
+                      "OUT OF STOCK", 'lib/asset/images/outstock.png'),
                 ),
               ],
             ),
-            const Row(
+            Row(
               children: [
                 Expanded(
-                  child: DashboardMenu(
-                    text: "LOW STOCK",
-                    imagePath: 'lib/asset/images/lowstock.png',
-                  ),
+                  child: dashboardMenu(
+                      "LOW STOCK", 'lib/asset/images/lowstock.png'),
                 ),
                 Expanded(
-                  child: DashboardMenu(
-                    text: "TOTAL EXPENSES",
-                    imagePath: 'lib/asset/images/expenses.png',
-                  ),
+                  child: dashboardMenu(
+                      "TOTAL EXPENSES", 'lib/asset/images/expenses.png'),
                 ),
               ],
             ),
@@ -101,7 +92,7 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: 15),
                       child: Text(
                         'Recent Products',
                         style: TextStyle(
@@ -127,24 +118,37 @@ class _DashboardState extends State<Dashboard> {
                 FutureBuilder<List<dynamic>>(
                     future: product.fetchRecentProduct(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data!.length > 4
-                                ? 4
-                                : snapshot.data!.length,
-                            separatorBuilder: (context, index) =>
-                                const Divider(),
-                            itemBuilder: (context, index) {
-                              final product = snapshot.data![index];
-                              return listViewRecent(
-                                  product['product_name'],
-                                  product['quantity'],
-                                  product['product_price']);
-                            });
+                      try {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('No recent products found'));
+                        } else {
+                          return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.length > 4
+                                  ? 4
+                                  : snapshot.data!.length,
+                              separatorBuilder: (context, index) =>
+                                  const Divider(),
+                              itemBuilder: (context, index) {
+                                final product = snapshot.data![index];
+                                return listViewRecent(
+                                    product['product_name'],
+                                    product['quantity'],
+                                    product['product_price']);
+                              });
+                        }
+                      } catch (e) {
+                        return Center(child: Text('Error: $e'));
                       }
                     })
               ],
@@ -155,9 +159,57 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  // Widget dashboardMenu() {
-
-  // }
+  Widget dashboardMenu(String text, String imagePath) {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xffB73030),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: InkWell(
+          onTap: () {
+            // Handle onTap action if needed
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(13.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        imagePath,
+                        width: 58,
+                        height: 58,
+                      ),
+                      Text(
+                        "<int>",
+                        style: TextStyle(
+                            color: Colors.red.shade100,
+                            fontSize: 22,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: "Poppins",
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget listViewRecent(String productName, int stock, int price) {
     return SizedBox(
@@ -171,7 +223,7 @@ class _DashboardState extends State<Dashboard> {
           leading: Transform.translate(
             offset: const Offset(-10, 0),
             child: const Icon(
-              Icons.check_box_outline_blank_outlined,
+              Icons.conveyor_belt,
               size: 50,
             ),
           ),

@@ -81,6 +81,11 @@ class _ProductsPageState extends State<ProductsPage> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No recent products found'));
                     } else {
                       return ListView.builder(
                         itemCount: snapshot.data!.length,
@@ -174,19 +179,28 @@ class _ProductsPageState extends State<ProductsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(productName,
-                        style:
-                            const TextStyle(fontFamily: "Inter", color: white)),
+                        style: const TextStyle(
+                            fontFamily: "Inter",
+                            color: white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18)),
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                       const Text("ID:",
-                          style: TextStyle(fontFamily: "Inter", color: white)),
-                      Text(id.toString(),
+                          style: TextStyle(
+                              fontFamily: "Inter",
+                              color: white,
+                              fontWeight: FontWeight.w500)),
+                      Text(" $id",
                           style: const TextStyle(
                               fontFamily: "Inter", color: white))
                     ]),
                     Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                       const Text("Price:",
-                          style: TextStyle(fontFamily: "Inter", color: white)),
-                      Text("₱$price",
+                          style: TextStyle(
+                              fontFamily: "Inter",
+                              color: white,
+                              fontWeight: FontWeight.w500)),
+                      Text(" ₱$price",
                           style: const TextStyle(
                               fontFamily: "Inter",
                               color: white,
