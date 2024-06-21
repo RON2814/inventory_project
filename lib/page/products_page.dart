@@ -77,7 +77,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
           Expanded(
               child: FutureBuilder<List<dynamic>>(
-                  future: product.fetchRecentProduct(),
+                  future: product.fetchProduct(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

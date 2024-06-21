@@ -1,10 +1,68 @@
+import 'package:again_inventory_project/database/account.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  final Function(bool) onLoginClick;
+  const Login({super.key, required this.onLoginClick});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final Account account = Account();
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool isObscure = true;
+  bool access = false;
+
+  bool _isLoading = false;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      isObscure = !isObscure;
+    });
+  }
+
+  void _onLoginPressed(bool validAcc) {
+    if (validAcc) {
+      widget.onLoginClick(validAcc);
+    }
+  }
+
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      Map<String, dynamic> result = await account.login(
+        _usernameController.text,
+        _passwordController.text,
+      );
+      print(result);
+      _onLoginPressed(result['access']);
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Text("${result['request']}\n\nclick anywhere to continue."),
+        ),
+      );
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7FAFC),
+      backgroundColor: const Color(0xFFF7FAFC),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -17,65 +75,64 @@ class Login extends StatelessWidget {
     );
   }
 
-Widget _buildHeader() {
-  return Container(
-    height: 280,
-    decoration: BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage('lib/asset/images/bg.png'),
-        fit: BoxFit.cover,
-        colorFilter: ColorFilter.mode(
-          Colors.red.withOpacity(0.8),
-          BlendMode.darken,
+  Widget _buildHeader() {
+    return Container(
+      height: 280,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: const AssetImage('lib/asset/images/bg.png'),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.red.withOpacity(0.8),
+            BlendMode.darken,
+          ),
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10),
         ),
       ),
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(10),
-        bottomRight: Radius.circular(10),
-      ),
-    ),
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Icon(
-              Icons.food_bank,
-              size: 48,
-              color: Colors.white,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 1.0),
-            child: Text(
-              'GOCHISOU BIMI',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Icon(
+                Icons.food_bank,
+                size: 48,
                 color: Colors.white,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            child: Text(
-              'Inventory',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                fontSize: 32,
-                color: Colors.white,
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 1.0),
+              child: Text(
+                'GOCHISOU BIMI',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 0),
+              child: Text(
+                'Inventory',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 32,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildLoginForm() {
     return Padding(
@@ -83,7 +140,7 @@ Widget _buildHeader() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             'Welcome',
             style: TextStyle(
               fontFamily: 'Inter',
@@ -92,8 +149,8 @@ Widget _buildHeader() {
               color: Color(0xFFB73030),
             ),
           ),
-          SizedBox(height: 12),
-          Text(
+          const SizedBox(height: 12),
+          const Text(
             'Please login to your account',
             style: TextStyle(
               fontFamily: 'Inter',
@@ -102,22 +159,32 @@ Widget _buildHeader() {
               color: Color(0xFF555555),
             ),
           ),
-          SizedBox(height: 30),
-          _buildInputField('Username', Icons.person),
-          SizedBox(height: 15),
-          _buildInputField('Password', Icons.lock),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
+          _buildInputField('Username', Icons.person, _usernameController, false,
+              isObscure, _togglePasswordVisibility),
+          const SizedBox(height: 15),
+          _buildInputField('Password', Icons.lock, _passwordController, true,
+              isObscure, _togglePasswordVisibility),
+          const SizedBox(height: 30),
+          if (_isLoading)
+            Container(
+              height: 80,
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: _login,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFB73030),
+              backgroundColor: const Color(0xFFB73030),
               elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              padding: EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: Text(
+            child: const Text(
               'Sign In',
               style: TextStyle(
                 fontFamily: 'Poppins',
@@ -132,7 +199,13 @@ Widget _buildHeader() {
     );
   }
 
-  Widget _buildInputField(String label, IconData iconData) {
+  Widget _buildInputField(
+      String label,
+      IconData iconData,
+      TextEditingController controller,
+      bool isPwdField,
+      bool isObscure,
+      VoidCallback togglePasswordVisibility) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -142,20 +215,29 @@ Widget _buildHeader() {
             color: Colors.grey.withOpacity(0.3),
             spreadRadius: 1,
             blurRadius: 2,
-            offset: Offset(0, 1), 
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: TextField(
+          obscureText: isPwdField ? isObscure : false,
+          controller: controller,
           decoration: InputDecoration(
             hintText: label,
             border: InputBorder.none,
             prefixIcon: Icon(
               iconData,
-              color: Color(0xFF888888),
+              color: const Color(0xFF888888),
             ),
+            suffixIcon: isPwdField
+                ? IconButton(
+                    onPressed: togglePasswordVisibility,
+                    icon: Icon(
+                        isObscure ? Icons.visibility : Icons.visibility_off),
+                  )
+                : null,
           ),
         ),
       ),
