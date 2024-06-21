@@ -126,11 +126,16 @@ class GetStarted extends StatelessWidget {
             onPressed: () {
               onTapGetStarted(context);
             },
+            buttonTextStyle: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 18.0,
+              color: Colors.white, 
+              fontWeight: FontWeight.w600, 
+            ),
             buttonStyle: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.red,
-              textStyle: const TextStyle(fontSize: 16.0),
-              padding:
-                  const EdgeInsets.symmetric(vertical: 14.0, horizontal: 32.0),
+              backgroundColor: Colors.red,
+              textStyle: TextStyle(fontSize: 16.0),
+              padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 32.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
