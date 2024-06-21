@@ -1,12 +1,11 @@
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
-import 'package:again_inventory_project/widget/dashboardmenu.dart'; // Assuming dashboardmenu.dart is in the correct location
+import 'package:again_inventory_project/widget/dashboard_menu.dart'; // Assuming dashboardmenu.dart is in the correct location
 
 class Dashboard extends StatefulWidget {
   final Function(int) onAddProductClick;
 
-  const Dashboard({Key? key, required this.onAddProductClick})
-      : super(key: key);
+  const Dashboard({super.key, required this.onAddProductClick});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -32,7 +31,7 @@ class _DashboardState extends State<Dashboard> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Row(
+            const Row(
               children: [
                 Expanded(
                   child: DashboardMenu(
@@ -48,7 +47,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-            Row(
+            const Row(
               children: [
                 Expanded(
                   child: DashboardMenu(
@@ -155,6 +154,10 @@ class _DashboardState extends State<Dashboard> {
       ),
     );
   }
+
+  // Widget dashboardMenu() {
+
+  // }
 
   Widget listViewRecent(String productName, int stock, int price) {
     return SizedBox(

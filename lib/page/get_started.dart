@@ -14,8 +14,8 @@ class CustomElevatedButton extends StatelessWidget {
   final double? height;
   final double? width;
 
-  CustomElevatedButton({
-    Key? key,
+  const CustomElevatedButton({
+    super.key,
     this.decoration,
     this.leftIcon,
     this.rightIcon,
@@ -28,7 +28,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.height,
     this.width,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class CustomElevatedButton extends StatelessWidget {
 }
 
 class GetStarted extends StatelessWidget {
-  const GetStarted({Key? key}) : super(key: key);
+  const GetStarted({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +76,12 @@ class GetStarted extends StatelessWidget {
         backgroundColor: Colors.white,
         body: Container(
           width: double.maxFinite,
-          padding: EdgeInsets.symmetric(horizontal: 18.0, vertical: 116.0),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 18.0, vertical: 116.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Spacer(),
+              const Spacer(),
               _buildGochisouBimiSection(context),
             ],
           ),
@@ -92,16 +93,16 @@ class GetStarted extends StatelessWidget {
   Widget _buildGochisouBimiSection(BuildContext context) {
     return Container(
       width: double.maxFinite,
-      padding: EdgeInsets.symmetric(horizontal: 36.0),
+      padding: const EdgeInsets.symmetric(horizontal: 36.0),
       child: Column(
         children: [
-          CustomImageView(
+          const CustomImageView(
             imagePath: 'lib/asset/images/logo.png',
             height: 210.0,
             width: double.maxFinite,
             margin: EdgeInsets.symmetric(horizontal: 34.0),
           ),
-          SizedBox(height: 24.0),
+          const SizedBox(height: 24.0),
           Text(
             "GOCHISOU BIMI",
             style: TextStyle(
@@ -110,7 +111,7 @@ class GetStarted extends StatelessWidget {
               color: Colors.red[900],
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             "Manage your Inventory!",
             style: TextStyle(
@@ -118,16 +119,18 @@ class GetStarted extends StatelessWidget {
               color: Colors.red[900],
             ),
           ),
-          SizedBox(height: 174.0),
+          const SizedBox(height: 174.0),
           CustomElevatedButton(
             text: "Get Started",
             onPressed: () {
               onTapGetStarted(context);
             },
             buttonStyle: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.red,
-              textStyle: TextStyle(fontSize: 16.0),
-              padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 32.0),
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.red,
+              textStyle: const TextStyle(fontSize: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 14.0, horizontal: 32.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -139,8 +142,7 @@ class GetStarted extends StatelessWidget {
   }
 
   void onTapGetStarted(BuildContext context) {
-      // wala pa
-
+    // wala pa
   }
 }
 
@@ -151,12 +153,12 @@ class CustomImageView extends StatelessWidget {
   final EdgeInsets? margin;
 
   const CustomImageView({
-    Key? key,
+    super.key,
     required this.imagePath,
     required this.height,
     required this.width,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

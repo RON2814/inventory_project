@@ -1,5 +1,5 @@
 import 'package:again_inventory_project/page/home.dart';
-import 'package:again_inventory_project/page/getStarted.dart';
+import 'package:again_inventory_project/page/get_started.dart';
 import 'package:flutter/material.dart';
 
 void main() {

@@ -5,10 +5,10 @@ class DashboardMenu extends StatelessWidget {
   final String imagePath;
 
   const DashboardMenu({
-    Key? key,
+    super.key,
     required this.text,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,6 @@ class DashboardMenu extends StatelessWidget {
         child: InkWell(
           onTap: () {
             // Handle onTap action if needed
-
-
           },
           child: Center(
             child: Padding(
@@ -35,10 +33,10 @@ class DashboardMenu extends StatelessWidget {
                     width: 58,
                     height: 58,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     text,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontFamily: "Poppins",
                     ),
