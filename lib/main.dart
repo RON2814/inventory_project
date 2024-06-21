@@ -34,7 +34,7 @@ class _MainAppState extends State<MainApp> {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey.shade200,
       ),
-      home: !access ? Login(onLoginClick: _onLoginPressed) : const Home(),
+      home: Login(),
     );
   }
 }
