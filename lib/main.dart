@@ -1,6 +1,6 @@
 import 'package:again_inventory_project/page/home.dart';
 import 'package:again_inventory_project/page/get_started.dart';
-import 'package:again_inventory_project/page/login.dart';
+// import 'package:again_inventory_project/page/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey.shade200,
       ),
-      home: Login(),
+      home: const GetStarted(),
     );
   }
 }

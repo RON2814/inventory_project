@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:again_inventory_project/page/login.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final BoxDecoration? decoration;
@@ -15,7 +16,7 @@ class CustomElevatedButton extends StatelessWidget {
   final double? width;
 
   const CustomElevatedButton({
-    super.key,
+    Key? key,
     this.decoration,
     this.leftIcon,
     this.rightIcon,
@@ -67,7 +68,7 @@ class CustomElevatedButton extends StatelessWidget {
 }
 
 class GetStarted extends StatelessWidget {
-  const GetStarted({super.key});
+  const GetStarted({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +127,7 @@ class GetStarted extends StatelessWidget {
               onTapGetStarted(context);
             },
             buttonStyle: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
+              foregroundColor: Colors.white, backgroundColor: Colors.red,
               textStyle: const TextStyle(fontSize: 16.0),
               padding:
                   const EdgeInsets.symmetric(vertical: 14.0, horizontal: 32.0),
@@ -142,7 +142,10 @@ class GetStarted extends StatelessWidget {
   }
 
   void onTapGetStarted(BuildContext context) {
-    // wala pa
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Login()),
+    );
   }
 }
 
@@ -153,7 +156,7 @@ class CustomImageView extends StatelessWidget {
   final EdgeInsets? margin;
 
   const CustomImageView({
-    super.key,
+    Key? key,
     required this.imagePath,
     required this.height,
     required this.width,
