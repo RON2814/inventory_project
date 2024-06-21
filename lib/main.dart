@@ -1,3 +1,4 @@
+import 'package:again_inventory_project/page/home.dart';
 import 'package:again_inventory_project/page/login.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,7 @@ class _MainAppState extends State<MainApp> {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey.shade200,
       ),
-      home: Login(onLoginClick: _onLoginPressed),
+      home: access ? const Home() : Login(onLoginClick: _onLoginPressed),
     );
   }
 }
