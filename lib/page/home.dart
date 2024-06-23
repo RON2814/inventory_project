@@ -175,10 +175,16 @@ class _HomeState extends State<Home> {
             ],
           ),
           const Spacer(),
-          const CircleAvatar(
+          CircleAvatar(
             radius: 25,
             backgroundColor: Colors.blue,
-            child: Icon(Icons.person, color: Colors.white, size: 38),
+            child: ClipOval(
+              child: Image.asset(
+                'lib/asset/images/image.png',
+                width: 50,
+                height: 50,
+              ),
+            ),
           )
         ],
       ),

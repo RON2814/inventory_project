@@ -21,7 +21,7 @@ class AccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Admin',
+                  'Administrator',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -29,9 +29,7 @@ class AccountPage extends StatelessWidget {
                 ),
               ],
             ),
-
-
-            
+   
             const SizedBox(height: 35),
             itemProfile('Edit Personal Details', Icons.person),
             const SizedBox(height: 20),
@@ -88,7 +86,7 @@ class AccountPage extends StatelessWidget {
           ),
         ),
         leading: Icon(iconData),
-        trailing: Icon(Icons.arrow_forward, color: Colors.grey.shade400),
+        trailing: Icon(Icons.arrow_forward, color: Color.fromARGB(255, 73, 73, 73)),
         tileColor: Colors.white,
       ),
     );
