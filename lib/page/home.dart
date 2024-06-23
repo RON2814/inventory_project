@@ -1,6 +1,7 @@
 import 'package:again_inventory_project/page/add_product.dart';
 import 'package:again_inventory_project/page/dashboard.dart';
 import 'package:again_inventory_project/page/products_page.dart';
+import 'package:again_inventory_project/page/account.dart'; 
 import 'package:again_inventory_project/widget/bottom_appbar.dart';
 import 'package:flutter/material.dart';
 
@@ -44,7 +45,7 @@ class _HomeState extends State<Home> {
                         decoration: BoxDecoration(
                           color: appbarColor,
                           borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(20)),
+                              bottom: Radius.circular(2)),
                         ),
                         child: IndexedStack(
                           index: _selectedIndex,
@@ -65,7 +66,7 @@ class _HomeState extends State<Home> {
                         Dashboard(onAddProductClick: _onItemPressed),
                         ProductsPage(onAddProductClick: _onItemPressed),
                         const Placeholder(),
-                        const Placeholder(),
+                        const AccountPage(),
                         const AddProduct(),
                       ],
                     ),
