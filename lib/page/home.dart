@@ -2,6 +2,7 @@ import 'package:again_inventory_project/page/add_product.dart';
 import 'package:again_inventory_project/page/dashboard.dart';
 import 'package:again_inventory_project/page/update_product.dart';
 import 'package:again_inventory_project/page/products_page.dart';
+import 'package:again_inventory_project/page/account.dart';
 import 'package:again_inventory_project/widget/bottom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -93,7 +94,7 @@ class _HomeState extends State<Home> {
                         decoration: BoxDecoration(
                           color: appbarColor,
                           borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(20)),
+                              bottom: Radius.circular(2)),
                         ),
                         child: IndexedStack(
                           index: _selectedIndex,
@@ -120,7 +121,7 @@ class _HomeState extends State<Home> {
                           refreshPage: _refreshProducts,
                         ),
                         const Placeholder(),
-                        const Placeholder(),
+                        const AccountPage(),
                         AddProduct(onAddedClick: _onItemPressed),
                         UpdateProduct(productId: _productId)
                       ],
@@ -234,10 +235,16 @@ class _HomeState extends State<Home> {
             ],
           ),
           const Spacer(),
-          const CircleAvatar(
+          CircleAvatar(
             radius: 25,
             backgroundColor: Colors.blue,
-            child: Icon(Icons.person, color: Colors.white, size: 38),
+            child: ClipOval(
+              child: Image.asset(
+                'lib/asset/images/image.png',
+                width: 50,
+                height: 50,
+              ),
+            ),
           )
         ],
       ),

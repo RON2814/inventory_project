@@ -223,14 +223,14 @@ class _ProductsPageState extends State<ProductsPage> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xffA52A2A),
+          color: Color.fromARGB(255, 180, 44, 44),
           border: Border.all(color: Colors.black),
           borderRadius: const BorderRadius.all(Radius.circular(14)),
         ),
         child: InkWell(
           onTap: () => _onEditProductPressed(5, id),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(15.0),
             child: Row(
               children: [
                 Expanded(
