@@ -13,14 +13,14 @@ class AccountPage extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Column(
+            const Column(
               children: [
                 CircleAvatar(
                   radius: 70,
                   backgroundImage: AssetImage('lib/asset/images/image.png'),
                 ),
-                const SizedBox(height: 10),
-                const Text(
+                SizedBox(height: 10),
+                Text(
                   'Administrator',
                   style: TextStyle(
                     fontSize: 20,
@@ -86,7 +86,7 @@ class AccountPage extends StatelessWidget {
           ),
         ),
         leading: Icon(iconData),
-        trailing: Icon(Icons.arrow_forward, color: Color.fromARGB(255, 73, 73, 73)),
+        trailing: const Icon(Icons.arrow_forward, color: Color.fromARGB(255, 73, 73, 73)),
         tileColor: Colors.white,
       ),
     );
