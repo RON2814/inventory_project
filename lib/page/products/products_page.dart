@@ -5,13 +5,15 @@ class ProductsPage extends StatefulWidget {
   final ScrollController scrollController;
   final Function(int) onAddProductClick;
   final Function(int, String) onEditProductClick;
-  final Function refreshPage;
-  const ProductsPage(
-      {super.key,
-      required this.onAddProductClick,
-      required this.onEditProductClick,
-      required this.scrollController,
-      required this.refreshPage});
+  final VoidCallback? onPressed;
+
+  const ProductsPage({
+    super.key,
+    required this.onAddProductClick,
+    required this.onEditProductClick,
+    required this.scrollController,
+    this.onPressed,
+  });
 
   @override
   State<ProductsPage> createState() => _ProductsPageState();
@@ -46,7 +48,7 @@ class _ProductsPageState extends State<ProductsPage> {
     return await product.fetchProduct();
   }
 
-  void refreshProducts() {
+  Future refreshProducts() async {
     setState(() {
       productsFuture = fetchProducts();
     });
@@ -123,32 +125,35 @@ class _ProductsPageState extends State<ProductsPage> {
             ),
 
             Expanded(
-                child: FutureBuilder<List<dynamic>>(
-                    future: productsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(
-                            child: Text('No recent products found'));
-                      } else {
-                        return ListView.builder(
-                          controller: widget.scrollController,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final product = snapshot.data![index];
-                            return _productListTile(
-                              product['product_name'],
-                              product['_id'],
-                              product['product_price'],
-                              product['quantity'],
-                            );
-                          },
-                        );
-                      }
-                    }))
+                child: RefreshIndicator(
+              onRefresh: refreshProducts,
+              child: FutureBuilder<List<dynamic>>(
+                  future: productsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No recent products found'));
+                    } else {
+                      return ListView.builder(
+                        controller: widget.scrollController,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final product = snapshot.data![index];
+                          return _productListTile(
+                            product['product_name'],
+                            product['_id'],
+                            product['product_price'],
+                            product['quantity'],
+                          );
+                        },
+                      );
+                    }
+                  }),
+            ))
           ],
         ),
       ),

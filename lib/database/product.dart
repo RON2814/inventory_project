@@ -56,6 +56,20 @@ class Product {
     }
   }
 
+  Future<Map<String, dynamic>> fetchTotalProduct() async {
+    try {
+      final response = await http.get(Uri.parse("$baseUri/get-product"));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
+  }
+
   Future<Map<String, dynamic>> addProduct(
     String productName,
     int productPrice,
@@ -75,7 +89,7 @@ class Product {
           'quantity': quantity,
           'category': category,
           'description': productDesc,
-          'date_added': DateTime.now()
+          'date_added': DateTime.now().toString()
         }),
       );
       if (response.statusCode == 200) {

@@ -2,9 +2,9 @@ import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
-  final Function(int) onAddProductClick;
+  final Function(int) onDashboardClick;
 
-  const Dashboard({super.key, required this.onAddProductClick});
+  const Dashboard({super.key, required this.onDashboardClick});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -12,11 +12,28 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final Product product = Product();
+  Map<String, dynamic> fetchTotal = {};
+  int? totalProd;
 
-  void _onAddProductPressed(int index) {
+  void _onDashboardPressed(int index) {
     setState(() {
-      widget.onAddProductClick(index);
+      widget.onDashboardClick(index);
     });
+  }
+
+  void _totalProduct() async {
+    try {
+      fetchTotal = await product.fetchTotalProduct();
+      totalProd = fetchTotal["total_product"];
+    } catch (e) {
+      print('Error fetching total product data: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _totalProduct();
   }
 
   static Color colorWhite = Colors.white;
@@ -33,12 +50,12 @@ class _DashboardState extends State<Dashboard> {
             Row(
               children: [
                 Expanded(
-                  child: dashboardMenu(
-                      "TOTAL PRODUCT", 'lib/asset/images/product.png'),
+                  child: dashboardMenu("TOTAL PRODUCT",
+                      'lib/asset/images/product.png', totalProd ?? 0, 1),
                 ),
                 Expanded(
                   child: dashboardMenu(
-                      "OUT OF STOCK", 'lib/asset/images/outstock.png'),
+                      "OUT OF STOCK", 'lib/asset/images/outstock.png', 0, 1),
                 ),
               ],
             ),
@@ -46,11 +63,11 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 Expanded(
                   child: dashboardMenu(
-                      "LOW STOCK", 'lib/asset/images/lowstock.png'),
+                      "LOW STOCK", 'lib/asset/images/lowstock.png', 0, 1),
                 ),
                 Expanded(
                   child: dashboardMenu(
-                      "TOTAL EXPENSES", 'lib/asset/images/expenses.png'),
+                      "TOTAL EXPENSES", 'lib/asset/images/expenses.png', 0, 0),
                 ),
               ],
             ),
@@ -61,7 +78,7 @@ class _DashboardState extends State<Dashboard> {
                   padding: const EdgeInsets.all(5),
                   child: ElevatedButton(
                     onPressed: () {
-                      _onAddProductPressed(4);
+                      _onDashboardPressed(4);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -104,7 +121,7 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     TextButton(
                       onPressed: () {
-                        _onAddProductPressed(1);
+                        _onDashboardPressed(1);
                       },
                       child: const Text(
                         'See all',
@@ -161,7 +178,8 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget dashboardMenu(String text, String imagePath) {
+  Widget dashboardMenu(
+      String text, String imagePath, int totalProd, int index) {
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Container(
@@ -171,7 +189,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         child: InkWell(
           onTap: () {
-            // Handle onTap action if needed
+            _onDashboardPressed(index);
           },
           child: Padding(
             padding: const EdgeInsets.all(13.0),
@@ -187,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                         height: 58,
                       ),
                       Text(
-                        "<int>",
+                        "$totalProd",
                         style: TextStyle(
                             color: Colors.red.shade100,
                             fontSize: 22,

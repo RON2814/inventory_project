@@ -172,7 +172,7 @@ class _AddProductState extends State<AddProduct> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFFB73030),
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                       side: const BorderSide(color: Color(0xFFB73030))),

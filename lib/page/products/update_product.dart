@@ -51,8 +51,8 @@ class UpdateProductState extends State<UpdateProduct> {
       _quantityController.text = productMap["quantity"].toString();
       _categoryController.text = productMap["category"] ?? "";
       _descriptionController.text = productMap["description"] ?? "";
-      _dateAdded =
-          DateTime(productMap["date_added"] ?? "2024-01-01 12:00:00.000Z");
+      _dateAdded = DateTime.parse(
+          productMap["date_added"] ?? "2024-01-01 12:00:00.000Z");
 
       _formattedDate = _dateFormat.format(_dateAdded!);
 
@@ -181,7 +181,7 @@ class UpdateProductState extends State<UpdateProduct> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color(0xFFB73030),
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: const BorderSide(color: Color(0xFFB73030))),

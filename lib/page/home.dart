@@ -1,8 +1,10 @@
-import 'package:again_inventory_project/page/add_product.dart';
+import 'package:again_inventory_project/page/account/edit_profile.dart';
+import 'package:again_inventory_project/page/history.dart';
+import 'package:again_inventory_project/page/products/add_product.dart';
 import 'package:again_inventory_project/page/dashboard.dart';
-import 'package:again_inventory_project/page/update_product.dart';
-import 'package:again_inventory_project/page/products_page.dart';
-import 'package:again_inventory_project/page/account.dart';
+import 'package:again_inventory_project/page/products/update_product.dart';
+import 'package:again_inventory_project/page/products/products_page.dart';
+import 'package:again_inventory_project/page/account/account.dart';
 import 'package:again_inventory_project/widget/bottom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -56,6 +58,8 @@ class _HomeState extends State<Home> {
       _selectedIndex = index;
       if (_selectedIndex == 4) {
         _currentPage = 1;
+      } else if (_selectedIndex == 6) {
+        _currentPage = 3;
       } else {
         _currentPage = index;
       }
@@ -72,7 +76,9 @@ class _HomeState extends State<Home> {
   }
 
   void _refreshProducts() {
-    setState(() {});
+    setState(() {
+      refreshProducts;
+    });
   }
 
   static Color appbarColor = const Color.fromARGB(255, 188, 62, 62);
@@ -105,6 +111,7 @@ class _HomeState extends State<Home> {
                             appbarOther(3),
                             appbarOther(4),
                             appbarOther(5),
+                            appbarOther(6),
                           ],
                         )),
                   ),
@@ -113,17 +120,18 @@ class _HomeState extends State<Home> {
                     child: IndexedStack(
                       index: _selectedIndex,
                       children: [
-                        Dashboard(onAddProductClick: _onItemPressed),
+                        Dashboard(onDashboardClick: _onItemPressed),
                         ProductsPage(
                           onAddProductClick: _onItemPressed,
                           onEditProductClick: _onEditPressed,
                           scrollController: _scrollController,
-                          refreshPage: _refreshProducts,
+                          onPressed: _refreshProducts,
                         ),
-                        const Placeholder(),
-                        const AccountPage(),
+                        const History(),
+                        AccountPage(onAccountClick: _onItemPressed),
                         AddProduct(onAddedClick: _onItemPressed),
-                        UpdateProduct(productId: _productId)
+                        UpdateProduct(productId: _productId),
+                        const EditProfile()
                       ],
                     ),
                   ),
@@ -167,6 +175,9 @@ class _HomeState extends State<Home> {
       case 5:
         selectedTitle = "Update Product";
         break;
+      case 6:
+        selectedTitle = "Edit Profile";
+        break;
     }
 
     return Row(
@@ -177,6 +188,8 @@ class _HomeState extends State<Home> {
             setState(() {
               if (_selectedIndex == 4 || _selectedIndex == 5) {
                 _onItemPressed(1);
+              } else if (_selectedIndex == 6) {
+                _onItemPressed(3);
               } else {
                 _onItemPressed(0);
               }

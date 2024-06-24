@@ -77,12 +77,14 @@ class _LoginState extends State<Login> {
       backgroundColor: const Color(0xFFF7FAFC),
       body: Stack(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              _buildLoginForm(),
-            ],
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeader(),
+                _buildLoginForm(),
+              ],
+            ),
           ),
           if (_isLoading) _buildLoadingIndicator()
         ],
@@ -150,59 +152,62 @@ class _LoginState extends State<Login> {
   }
 
   Widget _buildLoginForm() {
-    return Padding(
+    return ListView(
+      shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Welcome',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w700,
-              fontSize: 28,
-              color: Color(0xFFB73030),
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Please login to your account',
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-              color: Color(0xFF555555),
-            ),
-          ),
-          const SizedBox(height: 30),
-          _buildInputField('Username', Icons.person, _usernameController, false,
-              isObscure, _togglePasswordVisibility),
-          const SizedBox(height: 15),
-          _buildInputField('Password', Icons.lock, _passwordController, true,
-              isObscure, _togglePasswordVisibility),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: _login,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB73030),
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text(
-              'Sign In',
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Welcome',
               style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Colors.white,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w700,
+                fontSize: 28,
+                color: Color(0xFFB73030),
               ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(height: 12),
+            const Text(
+              'Please login to your account',
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                color: Color(0xFF555555),
+              ),
+            ),
+            const SizedBox(height: 30),
+            _buildInputField('Username', Icons.person, _usernameController,
+                false, isObscure, _togglePasswordVisibility),
+            const SizedBox(height: 15),
+            _buildInputField('Password', Icons.lock, _passwordController, true,
+                isObscure, _togglePasswordVisibility),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _login,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFB73030),
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: const Text(
+                'Sign In',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
