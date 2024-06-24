@@ -1,8 +1,10 @@
 import 'package:again_inventory_project/page/add_product.dart';
 import 'package:again_inventory_project/page/dashboard.dart';
+import 'package:again_inventory_project/page/update_product.dart';
 import 'package:again_inventory_project/page/products_page.dart';
 import 'package:again_inventory_project/widget/bottom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,6 +16,40 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   int _currentPage = 0;
+
+  String _productId = "";
+
+  final ScrollController _scrollController = ScrollController();
+  bool _isVisible = true;
+  bool _isScrollingDown = false;
+
+  late final Function refreshProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (!_isScrollingDown) {
+          setState(() {
+            _isScrollingDown = true;
+            _isVisible = false;
+          });
+        }
+      }
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (_isScrollingDown) {
+          setState(() {
+            _isScrollingDown = false;
+            _isVisible = true;
+          });
+        }
+      }
+    });
+  }
+
   void _onItemPressed(int index) {
     setState(() {
       _selectedIndex = index;
@@ -22,7 +58,20 @@ class _HomeState extends State<Home> {
       } else {
         _currentPage = index;
       }
+      FocusScope.of(context).unfocus();
     });
+  }
+
+  void _onEditPressed(int index, String prodId) {
+    setState(() {
+      _selectedIndex = index;
+      _currentPage = 1;
+      _productId = prodId;
+    });
+  }
+
+  void _refreshProducts() {
+    setState(() {});
   }
 
   static Color appbarColor = const Color.fromARGB(255, 188, 62, 62);
@@ -54,6 +103,7 @@ class _HomeState extends State<Home> {
                             appbarOther(2),
                             appbarOther(3),
                             appbarOther(4),
+                            appbarOther(5),
                           ],
                         )),
                   ),
@@ -63,10 +113,16 @@ class _HomeState extends State<Home> {
                       index: _selectedIndex,
                       children: [
                         Dashboard(onAddProductClick: _onItemPressed),
-                        ProductsPage(onAddProductClick: _onItemPressed),
+                        ProductsPage(
+                          onAddProductClick: _onItemPressed,
+                          onEditProductClick: _onEditPressed,
+                          scrollController: _scrollController,
+                          refreshPage: _refreshProducts,
+                        ),
                         const Placeholder(),
                         const Placeholder(),
-                        const AddProduct(),
+                        AddProduct(onAddedClick: _onItemPressed),
+                        UpdateProduct(productId: _productId)
                       ],
                     ),
                   ),
@@ -74,11 +130,12 @@ class _HomeState extends State<Home> {
               ),
             ),
             const SizedBox(height: 50),
-            _selectedIndex != 4
-                ? Positioned(
+            _selectedIndex < 4
+                ? AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
                     left: 20,
                     right: 20,
-                    bottom: 20,
+                    bottom: _isVisible ? 20 : -kBottomNavigationBarHeight - 20,
                     child: BottomAppbar(
                       onItemClicked: _onItemPressed,
                       currentIndex: _currentPage,
@@ -106,6 +163,9 @@ class _HomeState extends State<Home> {
       case 4:
         selectedTitle = "Add Product";
         break;
+      case 5:
+        selectedTitle = "Update Product";
+        break;
     }
 
     return Row(
@@ -114,7 +174,7 @@ class _HomeState extends State<Home> {
         TextButton(
           onPressed: () {
             setState(() {
-              if (_selectedIndex == 4) {
+              if (_selectedIndex == 4 || _selectedIndex == 5) {
                 _onItemPressed(1);
               } else {
                 _onItemPressed(0);

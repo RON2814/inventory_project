@@ -14,7 +14,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  bool access = false;
+  bool access = false; // set this to false to start at LOGIN ! ! !
 
   void _onLoginPressed(bool validAcc) {
     if (validAcc) {
@@ -22,7 +22,6 @@ class _MainAppState extends State<MainApp> {
         access = true;
       });
     }
-    print(access);
   }
 
   @override
@@ -32,6 +31,7 @@ class _MainAppState extends State<MainApp> {
       title: "Inventory System",
       theme: ThemeData(
         useMaterial3: true,
+        colorSchemeSeed: Colors.red,
         scaffoldBackgroundColor: Colors.grey.shade200,
       ),
       home: access ? const Home() : Login(onLoginClick: _onLoginPressed),

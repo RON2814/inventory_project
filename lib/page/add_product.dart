@@ -2,7 +2,8 @@ import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class AddProduct extends StatefulWidget {
-  const AddProduct({super.key});
+  final Function(int) onAddedClick;
+  const AddProduct({super.key, required this.onAddedClick});
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -19,8 +20,6 @@ class _AddProductState extends State<AddProduct> {
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  DateTime? _expirationDate;
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -31,38 +30,37 @@ class _AddProductState extends State<AddProduct> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _expirationDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != _expirationDate) {
-      setState(() {
-        _expirationDate = picked;
-      });
-    }
+  void _clearController() {
+    setState(() {
+      _nameController.text = "";
+      _priceController.text = "";
+      _quantityController.text = "";
+      _categoryController.text = "";
+
+      _descriptionController.text = "";
+    });
   }
 
   void _addProduct() async {
+    setState(() {
+      FocusScope.of(context).unfocus();
+    });
     try {
       if (_formKey.currentState!.validate()) {
-        // print('Product Name: ${_nameController.text}');
-        // print('Product Price: ${_priceController.text}');
-        // print('Quantity: ${_quantityController.text}');
-        // print('Product Category: ${_categoryController.text}');
-        //print('Expiration Date: $_expirationDate');
-        // print('Product Description: ${_descriptionController.text}');
         var result = await product.addProduct(
             _nameController.text,
             int.parse(_priceController.text),
             int.parse(_quantityController.text),
             _categoryController.text,
-            _expirationDate.toString(),
             _descriptionController.text);
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(result['message'])));
+            .showSnackBar(SnackBar(content: Text("${result['message']}")));
+        if (result['isInserted']) {
+          setState(() {
+            widget.onAddedClick(1);
+          });
+          _clearController();
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -78,7 +76,7 @@ class _AddProductState extends State<AddProduct> {
         child: Form(
           key: _formKey,
           child: ListView(
-            children: <Widget>[
+            children: [
               const Text(
                 'Please input your product details.',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -149,32 +147,7 @@ class _AddProductState extends State<AddProduct> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: 'Expiration Date',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onTap: () => _selectDate(context),
-                      controller: TextEditingController(
-                        text: _expirationDate == null
-                            ? ''
-                            : '${_expirationDate!.toLocal()}'.split(' ')[0],
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ],
-              ),
+              // old expiration field (dont know what for) . . .
               const SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
@@ -185,28 +158,29 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the product description';
-                  }
-                  return null;
-                },
+                // A validator or required.
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return 'Please enter the product description';
+                //   }
+                //   return null;
+                // },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addProduct,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFB73030),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFFB73030),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(color: Color(0xFFB73030))),
                 ),
                 child: const Text('Add Product',
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
                     )),
               ),
             ],

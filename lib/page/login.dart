@@ -35,6 +35,7 @@ class _LoginState extends State<Login> {
   void _login() async {
     setState(() {
       _isLoading = true;
+      FocusScope.of(context).unfocus();
     });
 
     try {
@@ -59,18 +60,32 @@ class _LoginState extends State<Login> {
     }
   }
 
+  Widget _buildLoadingIndicator() {
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.4),
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7FAFC),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeader(),
-            _buildLoginForm(),
-          ],
-        ),
+      body: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(),
+              _buildLoginForm(),
+            ],
+          ),
+          if (_isLoading) _buildLoadingIndicator()
+        ],
       ),
     );
   }
@@ -166,14 +181,6 @@ class _LoginState extends State<Login> {
           _buildInputField('Password', Icons.lock, _passwordController, true,
               isObscure, _togglePasswordVisibility),
           const SizedBox(height: 30),
-          if (_isLoading)
-            Container(
-              height: 80,
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
           ElevatedButton(
             onPressed: _login,
             style: ElevatedButton.styleFrom(
