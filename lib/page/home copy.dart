@@ -125,7 +125,6 @@ class _HomeState extends State<Home> {
                       children: [
                         Dashboard(onDashboardClick: _onItemPressed),
                         ProductsPage(
-                          //key: UniqueKey(),
                           onAddProductClick: _onItemPressed,
                           onEditProductClick: _onEditPressed,
                           scrollController: _scrollController,
@@ -196,7 +195,6 @@ class _HomeState extends State<Home> {
               } else {
                 _onItemPressed(0);
               }
-              _isVisible = true;
             });
           },
           child: Icon(

@@ -59,6 +59,7 @@ class _ProductsPageState extends State<ProductsPage> {
     setState(() {
       widget.onEditProductClick(index, prodId);
       FocusScope.of(context).unfocus();
+      refreshProducts();
     });
   }
 

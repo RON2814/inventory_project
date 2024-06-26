@@ -110,8 +110,11 @@ class _AddProductState extends State<AddProduct> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the product price';
+                  } else if (int.parse(value) < 1) {
+                    return "Product price must be greater than 1.";
+                  } else {
+                    return null;
                   }
-                  return null;
                 },
               ),
               const SizedBox(height: 20),
@@ -127,8 +130,11 @@ class _AddProductState extends State<AddProduct> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the quantity';
+                  } else if (int.parse(value) < 0) {
+                    return "quantity must be greater than 0.";
+                  } else {
+                    return null;
                   }
-                  return null;
                 },
               ),
               const SizedBox(height: 20),

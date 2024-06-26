@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 
 class Product {
   //  ↓↓↓↓↓  local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
-  static const localIpAdd = "192.168.254.103";
-  static const baseUri =
-      "http://$localIpAdd:3000"; // <- this is for LOCAL NODE JS
+  static const localIpAdd = "192.168.44.243";
+  // ↓↓↓↓↓ this is for LOCAL NODE JS
+  //static const baseUri = "http://$localIpAdd:3000"; 
   // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓
-  //static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
+  static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
 
   Future<List<dynamic>> fetchProduct(int limit, int page) async {
     try {
@@ -88,6 +88,20 @@ class Product {
     }
   }
 
+  Future<Map<String, dynamic>> updateProduct(
+    String id,
+    int productPrice,
+    int quantity,
+    String category,
+    String productDesc,
+  ) async {
+    try {
+      return {};
+    } catch (e) {
+      return {"success": false, "message": "Error: $e", "isInserted": false};
+    }
+  }
+
   Future<Map<String, dynamic>> addProduct(
     String productName,
     int productPrice,
@@ -97,7 +111,7 @@ class Product {
   ) async {
     try {
       final response = await http.post(
-        Uri.parse("$baseUri/add-product"),
+        Uri.parse("$baseUri/insert-product"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

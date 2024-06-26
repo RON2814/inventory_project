@@ -93,6 +93,7 @@ class UpdateProductState extends State<UpdateProduct> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
+                      enabled: false,
                       controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Your Product Name',
@@ -120,8 +121,11 @@ class UpdateProductState extends State<UpdateProduct> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the product price';
+                        } else if (int.parse(value) < 0) {
+                          return "$value must be greater than 1.";
+                        } else {
+                          return null;
                         }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 20),
@@ -137,8 +141,11 @@ class UpdateProductState extends State<UpdateProduct> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the quantity';
+                        } else if (int.parse(value) < 0) {
+                          return "$value must be greater than 0.";
+                        } else {
+                          return null;
                         }
-                        return null;
                       },
                     ),
                     const SizedBox(height: 20),
