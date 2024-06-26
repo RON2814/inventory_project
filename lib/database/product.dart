@@ -2,15 +2,32 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Product {
-  static const localIpAdd =
-      "192.168.44.243"; // <- local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
+  //  ↓↓↓↓↓  local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
+  static const localIpAdd = "192.168.44.243";
   static const baseUri =
       "http://$localIpAdd:3000"; // <- this is for LOCAL NODE JS
-  //static const baseUri = "https://ims-nodejs-ron2814.onrender.com"; // <- this is for ONLINE NODE JS (render.com) kinna slow
+  // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓
+  //static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
 
-  Future<List<dynamic>> fetchProduct() async {
+  Future<List<dynamic>> fetchProduct(int limit, int page) async {
     try {
-      final response = await http.get(Uri.parse("$baseUri/get-product"));
+      final response = await http
+          .get(Uri.parse("$baseUri/get-product?_limit=$limit&_page=$page"));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
+  }
+
+  Future<List<dynamic>> fetchSearchResult(String searchQeury) async {
+    try {
+      final response = await http
+          .get(Uri.parse("$baseUri/search-product?search=$searchQeury"));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -58,7 +75,7 @@ class Product {
 
   Future<Map<String, dynamic>> fetchTotalProduct() async {
     try {
-      final response = await http.get(Uri.parse("$baseUri/get-product"));
+      final response = await http.get(Uri.parse("$baseUri/get-total-product"));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);

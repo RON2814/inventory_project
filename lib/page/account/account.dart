@@ -12,7 +12,6 @@ class _AccountPageState extends State<AccountPage> {
   void _onAccMenuClicked(int index) {
     setState(() {
       widget.onAccountClick(index);
-      print("inkwell pressed. $index");
     });
   }
 

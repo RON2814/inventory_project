@@ -24,9 +24,11 @@ class _DashboardState extends State<Dashboard> {
   void _totalProduct() async {
     try {
       fetchTotal = await product.fetchTotalProduct();
-      totalProd = fetchTotal["total_product"];
+      setState(() {
+        totalProd = fetchTotal["total_product"];
+      });
     } catch (e) {
-      print('Error fetching total product data: $e');
+      throw Exception('Error fetching total product data: $e');
     }
   }
 
@@ -51,7 +53,7 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 Expanded(
                   child: dashboardMenu("TOTAL PRODUCT",
-                      'lib/asset/images/product.png', totalProd ?? 0, 1),
+                      'lib/asset/images/product.png', totalProd, 1),
                 ),
                 Expanded(
                   child: dashboardMenu(
@@ -179,7 +181,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget dashboardMenu(
-      String text, String imagePath, int totalProd, int index) {
+      String text, String imagePath, int? totalProd, int index) {
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Container(
@@ -196,7 +198,7 @@ class _DashboardState extends State<Dashboard> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
                       Image.asset(
@@ -204,14 +206,25 @@ class _DashboardState extends State<Dashboard> {
                         width: 58,
                         height: 58,
                       ),
-                      Text(
-                        "$totalProd",
-                        style: TextStyle(
+                      if (totalProd == null)
+                        const SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      else
+                        Text(
+                          "$totalProd",
+                          style: TextStyle(
                             color: Colors.red.shade100,
-                            fontSize: 22,
+                            fontSize: 30,
                             fontFamily: "Poppins",
-                            fontWeight: FontWeight.w600),
-                      )
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                     ],
                   ),
                 ),

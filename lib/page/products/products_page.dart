@@ -1,18 +1,17 @@
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProductsPage extends StatefulWidget {
   final ScrollController scrollController;
   final Function(int) onAddProductClick;
   final Function(int, String) onEditProductClick;
-  final VoidCallback? onPressed;
 
   const ProductsPage({
     super.key,
     required this.onAddProductClick,
     required this.onEditProductClick,
     required this.scrollController,
-    this.onPressed,
   });
 
   @override
@@ -21,9 +20,17 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   final Product product = Product();
-  late Future<List<dynamic>> productsFuture;
+  List<dynamic> products = [];
+
+  final TextEditingController _searchQuery = TextEditingController();
+
+  bool hasMore = true;
+  int page = 1;
+  // late Future<List<dynamic>> productsFuture;
 
   bool isSelected = false;
+
+  int limit = 10;
 
   void onSortPressed() {
     setState(() {
@@ -44,20 +51,91 @@ class _ProductsPageState extends State<ProductsPage> {
     });
   }
 
-  Future<List<dynamic>> fetchProducts() async {
-    return await product.fetchProduct();
-  }
-
-  Future refreshProducts() async {
+  void refreshProducts() {
     setState(() {
-      productsFuture = fetchProducts();
+      hasMore = true;
+      products.clear();
+      page = 1;
+      fetchProducts(page);
+      _searchQuery.text = "";
     });
   }
+
+  void searchProduct() {
+    setState(() {
+      products.clear();
+      page = 1;
+      fetchSearchResult(_searchQuery.text);
+      if (products.length < limit * page) {
+        hasMore = false;
+      } else {
+        hasMore = true;
+      }
+    });
+  }
+
+  Future<void> fetchSearchResult(String searchQuery) async {
+    try {
+      final newProducts = await product.fetchSearchResult(searchQuery);
+      setState(() {
+        products.addAll(newProducts);
+        if (products.length < limit * page) {
+          hasMore = false;
+        }
+      });
+    } catch (e) {
+      throw Exception('Error fetching products: $e');
+    }
+  }
+
+  Future<void> fetchProducts(int page) async {
+    try {
+      final newProducts = await product.fetchProduct(limit, page);
+      setState(() {
+        products.addAll(newProducts);
+        if (products.length < limit * page) {
+          hasMore = false;
+        }
+      });
+    } catch (e) {
+      throw Exception('Error fetching products: $e');
+    }
+  }
+
+  // Future<List<dynamic>> fetchProducts() async {
+  //   return await product.fetchProduct();
+  // }
+
+  // Future refreshProducts() async {
+  //   setState(() {
+  //     productsFuture = fetchProducts();
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
-    productsFuture = fetchProducts();
+    fetchProducts(page);
+    widget.scrollController.addListener(() {
+      if (widget.scrollController.position.maxScrollExtent ==
+          widget.scrollController.offset) {
+        setState(() {
+          page++;
+          if (_searchQuery.text == "") {
+            fetchProducts(page);
+          } else {
+            fetchSearchResult(_searchQuery.text);
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.dispose();
+    _searchQuery.dispose();
+    super.dispose();
   }
 
   @override
@@ -126,33 +204,31 @@ class _ProductsPageState extends State<ProductsPage> {
 
             Expanded(
                 child: RefreshIndicator(
-              onRefresh: refreshProducts,
-              child: FutureBuilder<List<dynamic>>(
-                  future: productsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text('No recent products found'));
-                    } else {
-                      return ListView.builder(
-                        controller: widget.scrollController,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          final product = snapshot.data![index];
-                          return _productListTile(
-                            product['product_name'],
-                            product['_id'],
-                            product['product_price'],
-                            product['quantity'],
-                          );
-                        },
-                      );
-                    }
-                  }),
+              onRefresh: () async => refreshProducts(),
+              child: ListView.builder(
+                controller: widget.scrollController,
+                itemCount: products.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < products.length) {
+                    final product = products[index];
+                    return _productListTile(
+                      product['product_name'],
+                      product['_id'],
+                      product['product_price'],
+                      product['quantity'],
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Center(
+                        child: hasMore
+                            ? const CircularProgressIndicator()
+                            : const Text("No more data to load."),
+                      ),
+                    );
+                  }
+                },
+              ),
             ))
           ],
         ),
@@ -183,6 +259,14 @@ class _ProductsPageState extends State<ProductsPage> {
     return SizedBox(
       height: 60,
       child: TextField(
+        controller: _searchQuery,
+        onSubmitted: (String value) {
+          if (value != "") {
+            searchProduct();
+          } else {
+            refreshProducts();
+          }
+        },
         style: const TextStyle(
           fontFamily: "Inter",
           color: Color(0xff020202),
@@ -228,7 +312,7 @@ class _ProductsPageState extends State<ProductsPage> {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Container(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 180, 44, 44),
+          color: const Color.fromARGB(255, 180, 44, 44),
           border: Border.all(color: Colors.black),
           borderRadius: const BorderRadius.all(Radius.circular(14)),
         ),
@@ -245,8 +329,8 @@ class _ProductsPageState extends State<ProductsPage> {
                       Text(productName,
                           style: const TextStyle(
                               fontFamily: "Inter",
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
                               fontSize: 20)),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.start,

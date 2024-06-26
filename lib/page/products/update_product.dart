@@ -60,7 +60,7 @@ class UpdateProductState extends State<UpdateProduct> {
         isUpdating = false;
       });
     } catch (e) {
-      print('Error fetching product data: $e');
+      throw Exception('Error fetching product data: $e');
     }
   }
 

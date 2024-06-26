@@ -1,0 +1,41 @@
+//
+
+/*
+
+    OLD LIST 
+
+FutureBuilder<List<dynamic>>(
+                  future: productsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No recent products found'));
+                    } else {
+                      return ListView.builder(
+                        controller: widget.scrollController,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final product = snapshot.data![index];
+                          if (index < snapshot.data!.length) {
+                            return _productListTile(
+                              product['product_name'],
+                              product['_id'],
+                              product['product_price'],
+                              product['quantity'],
+                            );
+                          } else {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                        },
+                      );
+                    }
+                  }),
+
+*/

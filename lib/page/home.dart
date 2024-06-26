@@ -26,8 +26,6 @@ class _HomeState extends State<Home> {
   bool _isVisible = true;
   bool _isScrollingDown = false;
 
-  late final Function refreshProducts;
-
   @override
   void initState() {
     super.initState();
@@ -75,10 +73,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _refreshProducts() {
-    setState(() {
-      refreshProducts;
-    });
+  void _refreshSelectedPage() {
+    setState(() {});
   }
 
   static Color appbarColor = const Color.fromARGB(255, 188, 62, 62);
@@ -100,7 +96,7 @@ class _HomeState extends State<Home> {
                         decoration: BoxDecoration(
                           color: appbarColor,
                           borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(2)),
+                              bottom: Radius.circular(18)),
                         ),
                         child: IndexedStack(
                           index: _selectedIndex,
@@ -125,7 +121,6 @@ class _HomeState extends State<Home> {
                           onAddProductClick: _onItemPressed,
                           onEditProductClick: _onEditPressed,
                           scrollController: _scrollController,
-                          onPressed: _refreshProducts,
                         ),
                         const History(),
                         AccountPage(onAccountClick: _onItemPressed),
