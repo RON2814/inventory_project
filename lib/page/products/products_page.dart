@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -26,11 +28,11 @@ class _ProductsPageState extends State<ProductsPage> {
 
   bool hasMore = true;
   int page = 1;
+  int limit = 10;
   // late Future<List<dynamic>> productsFuture;
 
   bool isSelected = false;
-
-  int limit = 10;
+  Timer? _debounce;
 
   void onSortPressed() {
     setState(() {
@@ -65,7 +67,7 @@ class _ProductsPageState extends State<ProductsPage> {
     setState(() {
       products.clear();
       page = 1;
-      fetchSearchResult(_searchQuery.text);
+      fetchSearchResult(_searchQuery.text, page);
       if (products.length < limit * page) {
         hasMore = false;
       } else {
@@ -74,9 +76,10 @@ class _ProductsPageState extends State<ProductsPage> {
     });
   }
 
-  Future<void> fetchSearchResult(String searchQuery) async {
+  Future<void> fetchSearchResult(String searchQuery, int page) async {
     try {
-      final newProducts = await product.fetchSearchResult(searchQuery);
+      final newProducts =
+          await product.fetchSearchResult(searchQuery, limit, page);
       setState(() {
         products.addAll(newProducts);
         if (products.length < limit * page) {
@@ -102,6 +105,17 @@ class _ProductsPageState extends State<ProductsPage> {
     }
   }
 
+  void _onSearchChanged(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (value.isNotEmpty) {
+        searchProduct();
+      } else {
+        refreshProducts();
+      }
+    });
+  }
+
   // Future<List<dynamic>> fetchProducts() async {
   //   return await product.fetchProduct();
   // }
@@ -121,10 +135,10 @@ class _ProductsPageState extends State<ProductsPage> {
           widget.scrollController.offset) {
         setState(() {
           page++;
-          if (_searchQuery.text == "") {
+          if (_searchQuery.text.isEmpty) {
             fetchProducts(page);
           } else {
-            fetchSearchResult(_searchQuery.text);
+            fetchSearchResult(_searchQuery.text, page);
           }
         });
       }
@@ -133,6 +147,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     widget.scrollController.dispose();
     _searchQuery.dispose();
     super.dispose();
@@ -261,12 +276,14 @@ class _ProductsPageState extends State<ProductsPage> {
       child: TextField(
         controller: _searchQuery,
         onSubmitted: (String value) {
-          if (value != "") {
+          FocusScope.of(context).unfocus();
+          if (value.isNotEmpty) {
             searchProduct();
           } else {
             refreshProducts();
           }
         },
+        onChanged: _onSearchChanged,
         style: const TextStyle(
           fontFamily: "Inter",
           color: Color(0xff020202),
@@ -296,10 +313,22 @@ class _ProductsPageState extends State<ProductsPage> {
             letterSpacing: 0.5,
             decorationThickness: 6,
           ),
-          suffixIcon: const Icon(
-            Icons.search,
-            size: 35,
-          ),
+          suffixIcon: _searchQuery.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchQuery.clear();
+                    setState(() {
+                      FocusScope.of(context).unfocus();
+                      _searchQuery.text = "";
+                    });
+                    refreshProducts(); // Optional: Refresh products if needed
+                  },
+                )
+              : const Icon(
+                  Icons.search,
+                  size: 35,
+                ),
           prefixIconColor: Colors.black,
         ),
       ),

@@ -24,10 +24,11 @@ class Product {
     }
   }
 
-  Future<List<dynamic>> fetchSearchResult(String searchQeury) async {
+  Future<List<dynamic>> fetchSearchResult(
+      String searchQeury, int limit, int page) async {
     try {
-      final response = await http
-          .get(Uri.parse("$baseUri/search-product?search=$searchQeury"));
+      final response = await http.get(Uri.parse(
+          "$baseUri/search-product?search=$searchQeury&_limit=$limit&_page=$page"));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
