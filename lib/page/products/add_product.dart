@@ -36,7 +36,6 @@ class _AddProductState extends State<AddProduct> {
       _priceController.text = "";
       _quantityController.text = "";
       _categoryController.text = "";
-
       _descriptionController.text = "";
     });
   }
@@ -71,6 +70,7 @@ class _AddProductState extends State<AddProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7FAFC),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -147,7 +147,6 @@ class _AddProductState extends State<AddProduct> {
                   return null;
                 },
               ),
-              // old expiration field (dont know what for) . . .
               const SizedBox(height: 20),
               TextFormField(
                 controller: _descriptionController,
@@ -158,13 +157,6 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 maxLines: 3,
-                // A validator or required.
-                // validator: (value) {
-                //   if (value == null || value.isEmpty) {
-                //     return 'Please enter the product description';
-                //   }
-                //   return null;
-                // },
               ),
               const SizedBox(height: 20),
               ElevatedButton(

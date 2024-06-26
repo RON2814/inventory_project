@@ -167,6 +167,7 @@ class _ProductsPageState extends State<ProductsPage> {
     const padding = EdgeInsets.symmetric(horizontal: 20, vertical: 15);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF7FAFC),
       body: Padding(
         padding: padding,
         child: Column(

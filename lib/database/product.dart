@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class Product {
   //  ↓↓↓↓↓  local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
-  static const localIpAdd = "192.168.44.243";
+  static const localIpAdd = "192.168.254.103";
   static const baseUri =
       "http://$localIpAdd:3000"; // <- this is for LOCAL NODE JS
   // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓

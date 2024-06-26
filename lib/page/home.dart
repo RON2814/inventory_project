@@ -83,6 +83,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         body: Stack(

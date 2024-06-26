@@ -77,6 +77,7 @@ class UpdateProductState extends State<UpdateProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7FAFC),
       body: isUpdating
           ? const Center(child: CircularProgressIndicator())
           : Padding(

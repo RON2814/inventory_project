@@ -14,7 +14,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  bool access = false; // set this to false to start at LOGIN ! ! !
+  bool access = true; // set this to false to start at LOGIN ! ! !
 
   void _onLoginPressed(bool validAcc) {
     if (validAcc) {
