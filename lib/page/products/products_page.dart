@@ -277,11 +277,7 @@ class _ProductsPageState extends State<ProductsPage> {
         controller: _searchQuery,
         onSubmitted: (String value) {
           FocusScope.of(context).unfocus();
-          if (value.isNotEmpty) {
-            searchProduct();
-          } else {
-            refreshProducts();
-          }
+          _onSearchChanged(value);
         },
         onChanged: _onSearchChanged,
         style: const TextStyle(
