@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProductsPage extends StatefulWidget {
   final ScrollController scrollController;
@@ -33,6 +32,16 @@ class _ProductsPageState extends State<ProductsPage> {
 
   bool isSelected = false;
   Timer? _debounce;
+
+  // sort button
+  String selectedSort = "All";
+
+  void _onSortPressed(String sortOption) {
+    setState(() {
+      selectedSort = sortOption;
+      // Add your sorting logic here if needed
+    });
+  }
 
   void onSortPressed() {
     setState(() {
@@ -251,11 +260,12 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  Widget _sortButtons(String name, {bool isSelected = false}) {
+  Widget _sortButtons(String name) {
+    bool isSelected = selectedSort == name;
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () => _onSortPressed(name),
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected ? const Color(0xFFB73030) : Colors.white,
           foregroundColor: isSelected ? Colors.white : const Color(0xFFB73030),
@@ -265,7 +275,8 @@ class _ProductsPageState extends State<ProductsPage> {
               borderRadius: BorderRadius.circular(10),
               side: const BorderSide(color: Color(0xFFB73030))),
         ),
-        child: Text(name),
+        child: Text(name,
+            style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
       ),
     );
   }

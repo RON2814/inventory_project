@@ -236,6 +236,7 @@ class _LoginState extends State<Login> {
         child: TextField(
           obscureText: isPwdField ? isObscure : false,
           controller: controller,
+          onSubmitted: (String value) => _login,
           decoration: InputDecoration(
             hintText: label,
             border: InputBorder.none,

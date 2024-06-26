@@ -65,11 +65,11 @@ class _DashboardState extends State<Dashboard> {
               children: [
                 Expanded(
                   child: dashboardMenu(
-                      "LOW STOCK", 'lib/asset/images/lowstock.png', 0, 1),
+                      "LOW STOCK", 'lib/asset/images/lowstock.png', 2, 1),
                 ),
                 Expanded(
-                  child: dashboardMenu(
-                      "TOTAL EXPENSES", 'lib/asset/images/expenses.png', 0, 0),
+                  child: dashboardMenu("TOTAL EXPENSES",
+                      'lib/asset/images/expenses.png', 945, 0),
                 ),
               ],
             ),
