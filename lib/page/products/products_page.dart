@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class ProductsPage extends StatefulWidget {
   final ScrollController scrollController;
-  final Function(int) onAddProductClick;
+  final Function(int, bool) onAddProductClick;
   final Function(int, String) onEditProductClick;
 
   const ProductsPage({
@@ -33,6 +33,8 @@ class _ProductsPageState extends State<ProductsPage> {
   bool isSelected = false;
   Timer? _debounce;
 
+  bool toRefreshProduct = false;
+
   // sort button
   String selectedSort = "All";
 
@@ -49,9 +51,13 @@ class _ProductsPageState extends State<ProductsPage> {
     });
   }
 
-  void _onAddProductPressed(int index) {
+  void _onAddProductPressed(int index, bool plsWork) {
     setState(() {
-      widget.onAddProductClick(index);
+      widget.onAddProductClick(index, plsWork);
+      if (plsWork) {
+        refreshProducts();
+        toRefreshProduct = false;
+      }
     });
   }
 
@@ -207,7 +213,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   padding: const EdgeInsets.all(5),
                   child: ElevatedButton(
                     onPressed: () {
-                      _onAddProductPressed(4);
+                      _onAddProductPressed(4, false);
                     },
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -410,7 +416,10 @@ class _ProductsPageState extends State<ProductsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text("Stock:",
-                        style: TextStyle(fontFamily: "Inter", color: white)),
+                        style: TextStyle(
+                            fontFamily: "Inter",
+                            color: white,
+                            fontWeight: FontWeight.w300)),
                     Container(
                       height: 30,
                       decoration: const BoxDecoration(
@@ -419,31 +428,37 @@ class _ProductsPageState extends State<ProductsPage> {
                       ),
                       child: Row(
                         children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.remove),
-                            style: IconButton.styleFrom(
-                              padding: const EdgeInsets.all(0),
-                              minimumSize: const Size(5, 5),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
+                          // IconButton(
+                          //   onPressed: () {},
+                          //   icon: const Icon(Icons.remove),
+                          //   style: IconButton.styleFrom(
+                          //     padding: const EdgeInsets.all(0),
+                          //     minimumSize: const Size(5, 5),
+                          //     shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(5)),
+                          //   ),
+                          // ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              "$stock",
+                              style: const TextStyle(
+                                  fontFamily: "Inter",
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18),
                             ),
                           ),
-                          Row(
-                            children: [
-                              Text("$stock"),
-                            ],
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.add),
-                            style: IconButton.styleFrom(
-                              padding: const EdgeInsets.all(0),
-                              minimumSize: const Size(5, 5),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5)),
-                            ),
-                          ),
+                          // IconButton(
+                          //   onPressed: () {},
+                          //   icon: const Icon(Icons.add),
+                          //   style: IconButton.styleFrom(
+                          //     padding: const EdgeInsets.all(0),
+                          //     minimumSize: const Size(5, 5),
+                          //     shape: RoundedRectangleBorder(
+                          //         borderRadius: BorderRadius.circular(5)),
+                          //   ),
+                          // ),
                         ],
                       ),
                     )

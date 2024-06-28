@@ -2,7 +2,7 @@ import 'package:again_inventory_project/database/product.dart';
 import 'package:flutter/material.dart';
 
 class AddProduct extends StatefulWidget {
-  final Function(int) onAddedClick;
+  final Function(int, bool) onAddedClick;
   const AddProduct({super.key, required this.onAddedClick});
 
   @override
@@ -52,11 +52,12 @@ class _AddProductState extends State<AddProduct> {
             int.parse(_quantityController.text),
             _categoryController.text,
             _descriptionController.text);
+
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("${result['message']}")));
-        if (result['isInserted']) {
+        if (bool.parse(result['isInserted'])) {
           setState(() {
-            widget.onAddedClick(1);
+            widget.onAddedClick(1, true);
           });
           _clearController();
         }

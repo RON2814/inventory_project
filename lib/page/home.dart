@@ -20,6 +20,8 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
   int _currentPage = 0;
 
+  bool toRefreshProduct = false;
+
   String _productId = "";
 
   final ScrollController _scrollController = ScrollController();
@@ -51,6 +53,13 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void _onAddProdPressed(int index, bool plsWork) {
+    setState(() {
+      _selectedIndex = index;
+      _currentPage = 1;
+    });
+  }
+
   void _onItemPressed(int index) {
     setState(() {
       _selectedIndex = index;
@@ -71,17 +80,6 @@ class _HomeState extends State<Home> {
       _currentPage = 1;
       _productId = prodId;
     });
-  }
-
-  Future<bool> _onWillPop() async {
-    if (_selectedIndex != 0) {
-      setState(() {
-        _selectedIndex = 0;
-        _currentPage = 0;
-      });
-      return false;
-    }
-    return true;
   }
 
   static Color appbarColor = const Color.fromARGB(255, 188, 62, 62);
@@ -126,14 +124,17 @@ class _HomeState extends State<Home> {
                         Dashboard(onDashboardClick: _onItemPressed),
                         ProductsPage(
                           //key: UniqueKey(),
-                          onAddProductClick: _onItemPressed,
+                          onAddProductClick: _onAddProdPressed,
                           onEditProductClick: _onEditPressed,
                           scrollController: _scrollController,
                         ),
                         const History(),
                         AccountPage(onAccountClick: _onItemPressed),
-                        AddProduct(onAddedClick: _onItemPressed),
-                        UpdateProduct(productId: _productId),
+                        AddProduct(onAddedClick: _onAddProdPressed),
+                        UpdateProduct(
+                          productId: _productId,
+                          onUpdatedClick: _onAddProdPressed,
+                        ),
                         const EditProfile()
                       ],
                     ),

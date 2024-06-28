@@ -4,9 +4,11 @@ import 'package:intl/intl.dart';
 
 class UpdateProduct extends StatefulWidget {
   final String productId;
+  final Function(int, bool) onUpdatedClick;
   const UpdateProduct({
     super.key,
     required this.productId,
+    required this.onUpdatedClick,
   });
 
   @override
@@ -30,6 +32,10 @@ class UpdateProductState extends State<UpdateProduct> {
   String? _formattedDate;
 
   bool isUpdating = false;
+
+  // old quantity
+  int? oldQty;
+  String? productName;
 
   @override
   void didUpdateWidget(covariant UpdateProduct oldWidget) {
@@ -56,6 +62,9 @@ class UpdateProductState extends State<UpdateProduct> {
 
       _formattedDate = _dateFormat.format(_dateAdded!);
 
+      oldQty = productMap["quantity"];
+      productName = productMap["product_name"];
+
       setState(() {
         isUpdating = false;
       });
@@ -63,6 +72,119 @@ class UpdateProductState extends State<UpdateProduct> {
       throw Exception('Error fetching product data: $e');
     }
   }
+
+  void _updateProduct() async {
+    FocusScope.of(context).unfocus();
+    try {
+      if (_formKey.currentState!.validate()) {
+        var result = await product.updateProduct(
+            widget.productId,
+            _nameController.text,
+            int.parse(_priceController.text),
+            int.parse(_quantityController.text),
+            oldQty!,
+            _categoryController.text,
+            _descriptionController.text);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("${result['request']}")));
+        if (bool.parse(result['isUpdated'])) {
+          setState(() {
+            widget.onUpdatedClick(1, true);
+          });
+          //_clearController();
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+  }
+
+  void _deleteProduct() async {
+    FocusScope.of(context).unfocus();
+
+    // Show a dialog before deletion
+    String productName = this.productName!;
+    TextEditingController controller = TextEditingController();
+
+    bool? confirmDelete = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Type the product name to confirm:'),
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(hintText: 'Product Name'),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                if (controller.text == productName) {
+                  Navigator.of(context).pop(true); // Confirm deletion
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text(
+                            'Product name does not match. Please type the correct product name.')),
+                  );
+                }
+              },
+              child: const Text('Confirm'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Cancel deletion
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Proceed with deletion if confirmed
+    if (confirmDelete == true) {
+      try {
+        var result = await product.deleteProduct(widget.productId);
+        print(result);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("${result['message']}")));
+        if (result['results'][0]['isDeleted']) {
+          setState(() {
+            widget.onUpdatedClick(1, true);
+          });
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Error: $e")));
+      }
+    }
+  }
+
+  // void _deleteProduct() async {
+  //   FocusScope.of(context).unfocus();
+  //   try {
+  //     var result = await product.deleteProduct(widget.productId);
+  //     print(result);
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text("${result['message']}")));
+  //     if (result['isDeleted']) {
+  //       setState(() {
+  //         widget.onUpdatedClick(1, true);
+  //       });
+  //       //_clearController();
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text("Error: $e")));
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -72,6 +194,16 @@ class UpdateProductState extends State<UpdateProduct> {
     _categoryController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _clearController() {
+    setState(() {
+      _nameController.text = "";
+      _priceController.text = "";
+      _quantityController.text = "";
+      _categoryController.text = "";
+      _descriptionController.text = "";
+    });
   }
 
   @override
@@ -93,7 +225,6 @@ class UpdateProductState extends State<UpdateProduct> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      enabled: false,
                       controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Your Product Name',
@@ -129,24 +260,39 @@ class UpdateProductState extends State<UpdateProduct> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _quantityController,
-                      decoration: InputDecoration(
-                        labelText: 'Quantity',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            controller: _quantityController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              labelText: 'Quantity',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the quantity';
+                              } else if (int.parse(value) < 0) {
+                                return "$value must be greater than 0.";
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
                         ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the quantity';
-                        } else if (int.parse(value) < 0) {
-                          return "$value must be greater than 0.";
-                        } else {
-                          return null;
-                        }
-                      },
+                        const SizedBox(width: 16),
+                        IconButton(
+                            onPressed: () =>
+                                showUpdateDialog(context, "Add quantity"),
+                            icon: const Icon(Icons.add)),
+                        IconButton(
+                            onPressed: () {}, icon: const Icon(Icons.remove))
+                      ],
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
@@ -183,9 +329,7 @@ class UpdateProductState extends State<UpdateProduct> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                      },
+                      onPressed: _updateProduct,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: const Color(0xFFB73030),
@@ -202,9 +346,7 @@ class UpdateProductState extends State<UpdateProduct> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                      },
+                      onPressed: _deleteProduct,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFB73030),
                         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -223,6 +365,80 @@ class UpdateProductState extends State<UpdateProduct> {
                 ),
               ),
             ),
+    );
+  }
+
+  // * * * Alert when click add or remove * * *
+  void showUpdateDialog(BuildContext context, String title) {
+    final TextEditingController quantityController = TextEditingController();
+    final TextEditingController updatedAtController = TextEditingController();
+
+    updatedAtController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    // Function to handle saving the data
+    void saveData() {
+      final int quantity = int.tryParse(quantityController.text) ?? 0;
+      final String updatedAt = updatedAtController.text;
+
+      // Here you can save the data to your desired location (e.g., database, state management)
+      print('Quantity: $quantity');
+      print('Updated At: $updatedAt');
+
+      Navigator.of(context).pop();
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: quantityController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Quantity',
+                  ),
+                ),
+                TextField(
+                  controller: updatedAtController,
+                  keyboardType: TextInputType.datetime,
+                  decoration: InputDecoration(
+                    labelText: 'Updated At',
+                    hintText: 'YYYY-MM-DD',
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (pickedDate != null) {
+                      updatedAtController.text =
+                          "${pickedDate.toLocal()}".split(' ')[0];
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Save'),
+              onPressed: saveData,
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -8,6 +8,18 @@ class Account {
   // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓
   static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
 
+  Future<bool> isServerReady() async {
+    try {
+      final response = await http.get(Uri.parse(baseUri));
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      throw Exception('Error checking server status: $e');
+    }
+    return false;
+  }
+
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await http.post(

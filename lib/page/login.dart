@@ -20,6 +20,21 @@ class _LoginState extends State<Login> {
 
   bool _isLoading = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _checkServerStatus();
+  // }
+
+  // Future<void> _checkServerStatus() async {
+  //   final serverReady = await account.isServerReady();
+  //   if (serverReady) {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
+
   void _togglePasswordVisibility() {
     setState(() {
       isObscure = !isObscure;
@@ -35,7 +50,7 @@ class _LoginState extends State<Login> {
   void _login() async {
     setState(() {
       _isLoading = true;
-      FocusScope.of(context).unfocus();
+      //FocusScope.of(context).unfocus();
     });
 
     try {
@@ -65,7 +80,21 @@ class _LoginState extends State<Login> {
       child: Container(
         color: Colors.black.withOpacity(0.4),
         child: const Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              Text(
+                "Please wait, server is loading.",
+                style: TextStyle(color: Colors.white, shadows: [
+                  Shadow(
+                      color: Colors.black87,
+                      blurRadius: 3.0,
+                      offset: Offset(2, 2))
+                ]),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -180,10 +209,10 @@ class _LoginState extends State<Login> {
             ),
             const SizedBox(height: 30),
             _buildInputField('Username', Icons.person, _usernameController,
-                false, isObscure, _togglePasswordVisibility),
+                false, isObscure, _togglePasswordVisibility, _login),
             const SizedBox(height: 15),
             _buildInputField('Password', Icons.lock, _passwordController, true,
-                isObscure, _togglePasswordVisibility),
+                isObscure, _togglePasswordVisibility, _login),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: _login,
@@ -212,12 +241,14 @@ class _LoginState extends State<Login> {
   }
 
   Widget _buildInputField(
-      String label,
-      IconData iconData,
-      TextEditingController controller,
-      bool isPwdField,
-      bool isObscure,
-      VoidCallback togglePasswordVisibility) {
+    String label,
+    IconData iconData,
+    TextEditingController controller,
+    bool isPwdField,
+    bool isObscure,
+    VoidCallback togglePasswordVisibility,
+    VoidCallback onSubmit,
+  ) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -236,7 +267,7 @@ class _LoginState extends State<Login> {
         child: TextField(
           obscureText: isPwdField ? isObscure : false,
           controller: controller,
-          onSubmitted: (String value) => _login,
+          onSubmitted: (_) => onSubmit,
           decoration: InputDecoration(
             hintText: label,
             border: InputBorder.none,

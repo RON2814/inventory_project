@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 
 class Product {
   //  ↓↓↓↓↓  local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
-  static const localIpAdd = "192.168.44.243";
+  static const localIpAdd = "192.168.1.121";
   // ↓↓↓↓↓ this is for LOCAL NODE JS
-  //static const baseUri = "http://$localIpAdd:3000"; 
+  static const baseUri = "http://$localIpAdd:3000";
   // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓
-  static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
+  //static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
 
   Future<List<dynamic>> fetchProduct(int limit, int page) async {
     try {
@@ -59,6 +59,7 @@ class Product {
     }
   }
 
+  /* >>>> RECENT ! ! ! <<<< */
   Future<List<dynamic>> fetchRecentProduct() async {
     try {
       final response =
@@ -74,6 +75,7 @@ class Product {
     }
   }
 
+  /* >>>> TOTAL PRODUCT ! ! ! <<<< */
   Future<Map<String, dynamic>> fetchTotalProduct() async {
     try {
       final response = await http.get(Uri.parse("$baseUri/get-total-product"));
@@ -88,17 +90,61 @@ class Product {
     }
   }
 
+  /* >>>> UPDATE ! ! ! <<<< */
   Future<Map<String, dynamic>> updateProduct(
     String id,
+    String productName,
     int productPrice,
-    int quantity,
+    int newQuantity,
+    int oldQuantity,
     String category,
     String productDesc,
   ) async {
     try {
-      return {};
+      final response = await http.post(
+        Uri.parse("$baseUri/update-product"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode({
+          "id": id,
+          "product_name": productName,
+          "product_price": productPrice,
+          "new_qty": newQuantity,
+          "old_qty": oldQuantity,
+          "category": category,
+          "product_desc": productDesc,
+          "updated_at": DateTime.now().toString(),
+        }),
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to response data');
+      }
     } catch (e) {
-      return {"success": false, "message": "Error: $e", "isInserted": false};
+      return {"success": false, "message": "Error: $e", "isUpdated": false};
+    }
+  }
+
+  /* >>>> DELETE ! ! ! <<<< */
+  Future<Map<String, dynamic>> deleteProduct(String prodId) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUri/delete-product"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode({"id": prodId}),
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception(
+            'Failed to delete product. Status code: ${response.statusCode}, body: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Fetch data has error: $e');
     }
   }
 
