@@ -52,10 +52,12 @@ class _AddProductState extends State<AddProduct> {
             int.parse(_quantityController.text),
             _categoryController.text,
             _descriptionController.text);
+        print(result);
+        print(result["isInserted"].runtimeType);
 
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("${result['message']}")));
-        if (bool.parse(result['isInserted'])) {
+        if (result['isInserted']) {
           setState(() {
             widget.onAddedClick(1, true);
           });

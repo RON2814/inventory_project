@@ -1,3 +1,4 @@
+import 'package:again_inventory_project/page/home.dart';
 import 'package:flutter/material.dart';
 import 'package:again_inventory_project/page/login.dart';
 
@@ -67,8 +68,22 @@ class CustomElevatedButton extends StatelessWidget {
   }
 }
 
-class GetStarted extends StatelessWidget {
+class GetStarted extends StatefulWidget {
   const GetStarted({super.key});
+
+  @override
+  State<GetStarted> createState() => _GetStartedState();
+}
+
+class _GetStartedState extends State<GetStarted> {
+  bool access = false;
+  void _onLoginPressed(bool validAcc) {
+    if (validAcc) {
+      setState(() {
+        access = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,14 +164,11 @@ class GetStarted extends StatelessWidget {
 
   void onTapGetStarted(BuildContext context) {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Login(
-                onLoginClick: (bool) {
-                  return false;
-                },
-              )),
-    );
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              access ? const Home() : Login(onLoginClick: _onLoginPressed),
+        ));
   }
 }
 
