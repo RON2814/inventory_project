@@ -7,6 +7,39 @@
       _expirationDate = null;
 
 
+HISTORY : : : 
+
+final List<Map<String, String>> historyLogs = [
+    {
+      'date': '2024-01-24',
+      'name': 'Product A',
+      'id': '0963736112',
+      'quantity': '5',
+      'type': 'decrease'
+    },
+    {
+      'date': '2024-05-24',
+      'name': 'Product B',
+      'id': '0963736113',
+      'quantity': '3',
+      'type': 'increase'
+    },
+    {
+      'date': '2024-06-26',
+      'name': 'Product C',
+      'id': '0963736114',
+      'quantity': '2',
+      'type': 'increase'
+    },
+    {
+      'date': '2023-12-20',
+      'name': 'Product D',
+      'id': '0963736115',
+      'quantity': '4',
+      'type': 'decrease'
+    },
+  ];
+
 
 
 Future<void> _selectDate(BuildContext context) async {

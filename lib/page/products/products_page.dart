@@ -181,7 +181,7 @@ class _ProductsPageState extends State<ProductsPage> {
           children: [
             // Search Bar -- HERE
             _searchBarMain(),
-            Row(
+            /* Row( hide for now sorry :<
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SingleChildScrollView(
@@ -203,7 +203,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   ),
                 ),
               ],
-            ),
+            ), */
             Row(
               children: [
                 const Text("All products",

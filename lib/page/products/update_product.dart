@@ -34,8 +34,10 @@ class UpdateProductState extends State<UpdateProduct> {
   bool isUpdating = false;
 
   // old quantity
-  int? oldQty;
+  int? oldQty, toUpdateQty;
+  String? updatedAt;
   String? productName;
+  bool? isAdded;
 
   @override
   void didUpdateWidget(covariant UpdateProduct oldWidget) {
@@ -57,8 +59,7 @@ class UpdateProductState extends State<UpdateProduct> {
       _quantityController.text = productMap["quantity"].toString();
       _categoryController.text = productMap["category"] ?? "";
       _descriptionController.text = productMap["description"] ?? "";
-      _dateAdded = DateTime.parse(
-          productMap["date_added"] ?? "2024-01-01 12:00:00.000Z");
+      _dateAdded = DateTime.parse(productMap["date_added"]);
 
       _formattedDate = _dateFormat.format(_dateAdded!);
 
@@ -78,13 +79,18 @@ class UpdateProductState extends State<UpdateProduct> {
     try {
       if (_formKey.currentState!.validate()) {
         var result = await product.updateProduct(
-            widget.productId,
-            _nameController.text,
-            int.parse(_priceController.text),
-            int.parse(_quantityController.text),
-            oldQty!,
-            _categoryController.text,
-            _descriptionController.text);
+          widget.productId,
+          _nameController.text,
+          int.parse(_priceController.text),
+          int.parse(_quantityController.text),
+          oldQty!,
+          _categoryController.text,
+          _descriptionController.text,
+          isAdded!,
+          toUpdateQty!,
+          updatedAt!,
+          updatedAt!,
+        );
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("${result['request']}")));
         if (bool.parse(result['isUpdated'])) {
@@ -286,12 +292,29 @@ class UpdateProductState extends State<UpdateProduct> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        IconButton(
-                            onPressed: () =>
-                                showUpdateDialog(context, "Add quantity"),
-                            icon: const Icon(Icons.add)),
-                        IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.remove))
+                        Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.red, shape: BoxShape.circle),
+                          child: IconButton(
+                              onPressed: () => showUpdateDialog(
+                                  context, "Add quantity", true),
+                              icon: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              )),
+                        ),
+                        const SizedBox(width: 16),
+                        Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.red, shape: BoxShape.circle),
+                          child: IconButton(
+                              onPressed: () => showUpdateDialog(
+                                  context, "Remove quantity", false),
+                              icon: const Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                              )),
+                        )
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -369,20 +392,34 @@ class UpdateProductState extends State<UpdateProduct> {
   }
 
   // * * * Alert when click add or remove * * *
-  void showUpdateDialog(BuildContext context, String title) {
+  void showUpdateDialog(BuildContext context, String title, bool toAdd) {
     final TextEditingController quantityController = TextEditingController();
     final TextEditingController updatedAtController = TextEditingController();
 
     updatedAtController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     // Function to handle saving the data
-    void saveData() {
+    void saveData(bool isAdded) {
       final int quantity = int.tryParse(quantityController.text) ?? 0;
       final String updatedAt = updatedAtController.text;
 
-      // Here you can save the data to your desired location (e.g., database, state management)
-      print('Quantity: $quantity');
-      print('Updated At: $updatedAt');
+      setState(() {
+        if (isAdded) {
+          _quantityController.text = (oldQty! + quantity).toString();
+          toUpdateQty = quantity;
+          this.isAdded = true;
+        } else {
+          if (quantity < oldQty!) {
+            _quantityController.text = (oldQty! - quantity).toString();
+            toUpdateQty = quantity;
+            this.isAdded = false;
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("can't update less than 0 in quantity.")));
+          }
+        }
+      });
+      this.updatedAt = updatedAt;
 
       Navigator.of(context).pop();
     }
@@ -398,14 +435,14 @@ class UpdateProductState extends State<UpdateProduct> {
                 TextField(
                   controller: quantityController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Quantity',
                   ),
                 ),
                 TextField(
                   controller: updatedAtController,
                   keyboardType: TextInputType.datetime,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Updated At',
                     hintText: 'YYYY-MM-DD',
                   ),
@@ -427,14 +464,14 @@ class UpdateProductState extends State<UpdateProduct> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text('Save'),
-              onPressed: saveData,
+              onPressed: () => saveData(toAdd),
+              child: const Text('Save'),
             ),
           ],
         );

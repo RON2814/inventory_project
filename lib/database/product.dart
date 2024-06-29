@@ -1,13 +1,10 @@
 import 'dart:convert';
+import 'package:again_inventory_project/database/constant.dart';
 import 'package:http/http.dart' as http;
 
 class Product {
-  //  ↓↓↓↓↓  local ip address change it if its not working. (open cmd and type "ipconfig" and look for IPv4 Address)
-  static const localIpAdd = "192.168.1.121";
-  // ↓↓↓↓↓ this is for LOCAL NODE JS
-  static const baseUri = "http://$localIpAdd:3000";
-  // ↓↓↓↓↓ this is for ONLINE NODE JS (render.com) kinna slow ↓↓↓↓↓
-  //static const baseUri = "https://ims-nodejs-ron2814.onrender.com";
+  // * * * Change localBaseUri to deployBaseUri to change from localhost to deployed server
+  static const baseUri = Constant.localBaseUri;
 
   Future<List<dynamic>> fetchProduct(int limit, int page) async {
     try {
@@ -99,6 +96,10 @@ class Product {
     int oldQuantity,
     String category,
     String productDesc,
+    bool isAdded,
+    int editedQty,
+    String toUpdateQty,
+    String updatedAt,
   ) async {
     try {
       final response = await http.post(
@@ -114,7 +115,9 @@ class Product {
           "old_qty": oldQuantity,
           "category": category,
           "product_desc": productDesc,
-          "updated_at": DateTime.now().toString(),
+          "is_added": isAdded,
+          "edited_qty": editedQty,
+          "updated_at": updatedAt,
         }),
       );
       if (response.statusCode == 200) {
@@ -185,6 +188,26 @@ class Product {
       }
     } catch (e) {
       return {"success": false, "message": "Error: $e", "isInserted": false};
+    }
+  }
+
+  // * * * HISTORY!!!! * * *
+  Future<List<dynamic>> fetchHistory(int limit, int page) async {
+    try {
+      final response = await http
+          .get(Uri.parse("$baseUri/fetch-history?_limit=$limit&_page=$page"));
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception(
+            'Failed to load data with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch history: $e');
     }
   }
 }
