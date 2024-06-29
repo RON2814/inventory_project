@@ -98,7 +98,6 @@ class Product {
     String productDesc,
     bool isAdded,
     int editedQty,
-    String toUpdateQty,
     String updatedAt,
   ) async {
     try {

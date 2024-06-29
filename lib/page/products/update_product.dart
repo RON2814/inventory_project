@@ -86,11 +86,12 @@ class UpdateProductState extends State<UpdateProduct> {
           oldQty!,
           _categoryController.text,
           _descriptionController.text,
-          isAdded!,
-          toUpdateQty!,
-          updatedAt!,
-          updatedAt!,
+          isAdded ?? true,
+          toUpdateQty ?? 0,
+          updatedAt ?? "",
         );
+        print(result);
+        print(result['isUpdated'].runtimeType);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("${result['request']}")));
         if (bool.parse(result['isUpdated'])) {
@@ -294,7 +295,8 @@ class UpdateProductState extends State<UpdateProduct> {
                         const SizedBox(width: 16),
                         Container(
                           decoration: const BoxDecoration(
-                              color: Colors.red, shape: BoxShape.circle),
+                              color: Color.fromARGB(255, 188, 62, 62),
+                              shape: BoxShape.circle),
                           child: IconButton(
                               onPressed: () => showUpdateDialog(
                                   context, "Add quantity", true),
@@ -306,7 +308,8 @@ class UpdateProductState extends State<UpdateProduct> {
                         const SizedBox(width: 16),
                         Container(
                           decoration: const BoxDecoration(
-                              color: Colors.red, shape: BoxShape.circle),
+                              color: Color.fromARGB(255, 188, 62, 62),
+                              shape: BoxShape.circle),
                           child: IconButton(
                               onPressed: () => showUpdateDialog(
                                   context, "Remove quantity", false),
@@ -343,12 +346,12 @@ class UpdateProductState extends State<UpdateProduct> {
                         ),
                       ),
                       maxLines: 3,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the product description';
-                        }
-                        return null;
-                      },
+                      // validator: (value) {
+                      //   if (value == null || value.isEmpty) {
+                      //     return 'Please enter the product description';
+                      //   }
+                      //   return null;
+                      // },
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
