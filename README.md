@@ -19,7 +19,7 @@
 
 ## Overview
 
-**CGOHISOU Inventory Tracker** is a mobile application designed to help users efficiently manage and monitor the inventory of the CGOHISOU. Built as a project during my second year of studies, this app leverages modern technologies to provide a seamless and intuitive inventory tracking experience.
+**CGOHISOU Inventory Tracker** is a mobile application designed to help users efficiently manage and monitor the inventory of the CGOHISOU. Built as a project during my second year of studies, this app leverages modern technologies to inventory tracking.
 
 ## Features
 
