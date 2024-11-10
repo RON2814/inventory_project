@@ -44,3 +44,6 @@ app.*.map.json
 
 # Build folder because its big lol
 build/
+
+# .env file
+/lib/server/.env
