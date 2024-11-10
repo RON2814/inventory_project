@@ -58,12 +58,13 @@ class _LoginState extends State<Login> {
         _usernameController.text,
         _passwordController.text,
       );
-      _onLoginPressed(result['access']);
+      _onLoginPressed(result['access'] ?? false);
       showDialog(
         // ignore: use_build_context_synchronously
         context: context,
         builder: (context) => AlertDialog(
-          content: Text("${result['request']}\n\nclick anywhere to continue."),
+          content: Text(
+              "${result['request'] ?? "Error: please try again"}\n\nclick anywhere to continue."),
         ),
       );
     } catch (e) {
